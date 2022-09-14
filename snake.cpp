@@ -549,7 +549,14 @@ void resetGame()
 	g.winner    = 0;
 }
 
+//================================
+//Yeana added an extern function:
+//===============================
 extern int show_my_name();
+//================================
+//Darien added an extern function:
+//===============================
+extern int greeting();
 
 int checkKeys(XEvent *e)
 {
@@ -573,6 +580,9 @@ int checkKeys(XEvent *e)
 			break;
 		case XK_y:
 			show_my_name();
+			break;
+		case XK_d:
+			greeting();
 			break;
 		case XK_equal:
 			g.snake.delay *= 0.9;
