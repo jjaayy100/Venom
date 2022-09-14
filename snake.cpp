@@ -555,8 +555,13 @@ void resetGame()
 extern int show_my_name();
 //================================
 //Darien added an extern function:
-//===============================
+//================================
 extern int greeting();
+//=================================
+//Jorge added an extern function:
+//=================================
+extern int jhello();
+
 
 int checkKeys(XEvent *e)
 {
@@ -583,6 +588,9 @@ int checkKeys(XEvent *e)
 			break;
 		case XK_d:
 			greeting();
+			break;
+		case XK_a:
+			jhello();
 			break;
 		case XK_equal:
 			g.snake.delay *= 0.9;
