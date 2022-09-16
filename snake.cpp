@@ -561,6 +561,10 @@ extern int greeting();
 //Jorge added an extern function:
 //=================================
 extern int jhello();
+//=================================
+//Jayden added an extern function:
+//=================================
+extern int Money();
 
 
 int checkKeys(XEvent *e)
@@ -591,6 +595,9 @@ int checkKeys(XEvent *e)
 			break;
 		case XK_a:
 			jhello();
+			break;
+		case XK_j:
+			Money();
 			break;
 		case XK_equal:
 			g.snake.delay *= 0.9;
