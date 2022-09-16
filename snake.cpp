@@ -565,6 +565,9 @@ extern int jhello();
 //Jayden added an extern function:
 //=================================
 extern int Money();
+//Param added an extern function:
+//=================================
+extern int CSUB();
 
 
 int checkKeys(XEvent *e)
@@ -598,6 +601,9 @@ int checkKeys(XEvent *e)
 			break;
 		case XK_j:
 			Money();
+			break;
+		case XK_p:
+			CSUB();
 			break;
 		case XK_equal:
 			g.snake.delay *= 0.9;
