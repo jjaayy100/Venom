@@ -1,5 +1,4 @@
 //jayden Bankston
-//Lab 4
 //Source file
 //
 //
@@ -11,4 +10,12 @@ int Money()
 {
     cout << "Jay Money!" << endl;
     return 0;
+}
+extern void youlost(int lost)
+{
+    if (lost)
+    {
+	cout << "You Lost" << endl; 
+    }
+
 }

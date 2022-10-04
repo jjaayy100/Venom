@@ -48,6 +48,7 @@
 #include "log.h"
 //#include "ppm.h"
 #include "fonts.h"
+#include "jbankston.h"
 
 #define USE_OPENAL_SOUND
 #ifdef USE_OPENAL_SOUND
@@ -565,6 +566,7 @@ extern int jhello();
 //Jayden added an extern function:
 //=================================
 extern int Money();
+extern int youlost(); 
 //Param added an extern function:
 //=================================
 extern int CSUB();
@@ -705,12 +707,14 @@ void getGridCenter(const int i, const int j, int cent[2])
 	cent[1] += (bq * i1);
 }
 
-
 void physics(void)
 {
 	int i;
 	if (g.gameover)
-		return;
+	{
+	    youlost(g.gameover);
+	    return;
+	}
 	//
 	//
 	//Is it time to move the snake?
@@ -847,6 +851,11 @@ void render(void)
 		glTexCoord2f(1.0f, 0.0f); glVertex2i(g.xres, 0);
 	glEnd();
 	glBindTexture(GL_TEXTURE_2D, 0);
+	//draw you lost box 
+//	if (g.gameover)
+//	{
+//
+//	}
 	//
 	//draw all buttons
 	for (i=0; i<g.nbuttons; i++) {
