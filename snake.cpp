@@ -50,6 +50,8 @@
 #include "fonts.h"
 #include "jbankston.h"
 
+#include "jambriz.h"
+
 #define USE_OPENAL_SOUND
 #ifdef USE_OPENAL_SOUND
 #include </usr/include/AL/alut.h>
@@ -168,6 +170,10 @@ struct Global {
 	Button button[MAXBUTTONS];
 	int nbuttons;
 	//
+	//=================================
+	//Jorge added this for credits
+	unsigned int credits;
+	//=================================
 	ALuint alBufferDrip, alBufferTick;
 	ALuint alSourceDrip, alSourceTick;
 	Global() {
@@ -178,6 +184,7 @@ struct Global {
 		winner = 0;
 		nbuttons = 0;
 		marbleImage=NULL;
+		credits = 0;
 	}
 } g;
 
@@ -559,7 +566,7 @@ extern int show_my_name();
 //================================
 extern int greeting();
 //=================================
-//Jorge added an extern function:
+//Jorge added an external function:
 //=================================
 extern int jhello();
 //=================================
@@ -626,6 +633,9 @@ int checkKeys(XEvent *e)
 			break;
 		case XK_Down:
 			g.snake.direction = DIRECTION_DOWN;
+			break;
+		case XK_c:
+			g.credits = set_credits_state(g.credits);
 			break;
 	}
 	return 0;
@@ -707,6 +717,7 @@ void getGridCenter(const int i, const int j, int cent[2])
 	cent[1] += (bq * i1);
 }
 
+
 void physics(void)
 {
 	int i;
@@ -715,6 +726,7 @@ void physics(void)
 	    youlost(g.gameover);
 	    return;
 	}
+		return;
 	//
 	//
 	//Is it time to move the snake?
@@ -976,6 +988,11 @@ void render(void)
 	r.bot    = g.yres-100;
 	r.center = 1;
 	ggprint16(&r, 16, 0x00ffffff, "Snake");
+	//And finally, the credits screen
+	if (g.credits)
+	{
+	    show_credits_screen(g.xres, g.yres);
+	}
 }
 
 
