@@ -48,7 +48,7 @@
 #include "log.h"
 //#include "ppm.h"
 #include "fonts.h"
-#include "help.h"
+#include "ptakkar.h"
 
 #define USE_OPENAL_SOUND
 #ifdef USE_OPENAL_SOUND
@@ -163,7 +163,7 @@ struct Global {
 	int boardDim;
 	int gameover;
 	int winner;
-	int help;
+	int pause;
 	Image *marbleImage;
 	GLuint marbleTexture;
 	Button button[MAXBUTTONS];
@@ -179,10 +179,7 @@ struct Global {
 		winner = 0;
 		nbuttons = 0;
 		marbleImage=NULL;
-
-		// help screen variable added by Yeana 
-		// help screen not up initially 
-		help = 0;
+		pause = 0;
 	}
 } g;
 
@@ -560,11 +557,6 @@ void resetGame()
 //===============================
 extern int show_my_name();
 //================================
-//Oct3 Yeana added an extern function:
-//===============================
-// extern int help_screen(unsigned int h);
-//================================
-//================================
 //Darien added an extern function:
 //================================
 extern int greeting();
@@ -578,7 +570,7 @@ extern int jhello();
 extern int Money();
 //Param added an extern function:
 //=================================
-extern int CSUB();
+extern int pauseGame();
 
 
 int checkKeys(XEvent *e)
@@ -604,11 +596,6 @@ int checkKeys(XEvent *e)
 		case XK_y:
 			show_my_name();
 			break;
-		case XK_h:
-			show_my_name();
-			g.help = help_screen(g.help);
-			break;
-
 		case XK_d:
 			greeting();
 			break;
@@ -619,7 +606,7 @@ int checkKeys(XEvent *e)
 			Money();
 			break;
 		case XK_p:
-			CSUB();
+			g.pause = pauseGame(g.pause);
 			break;
 		case XK_equal:
 			g.snake.delay *= 0.9;
@@ -985,14 +972,13 @@ void render(void)
 	ggprint16(&r, 16, 0x00ffffff, "Snake");
 
 
-	if (g.help) {
-	    // show help screen
-	    show_help_screen(g.xres, g.yres);
-
-	    return;
-	}
+       if (g.pause) {
+	   show_pauseScreen( g.xres, g.yres);
+	   return;
+       }
 
 }
+
 
 
 
