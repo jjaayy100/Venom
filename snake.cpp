@@ -977,6 +977,15 @@ void render(void)
 	r.bot    = g.yres-100;
 	r.center = 1;
 	ggprint16(&r, 16, 0x00ffffff, "Snake");
+
+	//Yeana's help screen
+	if (g.help) {
+	    // show help screen
+	    show_help_screen(g.xres, g.yres);
+
+	    return;
+	}
+
 }
 
 
