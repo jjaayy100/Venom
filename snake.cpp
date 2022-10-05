@@ -596,6 +596,10 @@ int checkKeys(XEvent *e)
 		case XK_y:
 			show_my_name();
 			break;
+		case XK_h:
+			show_my_name();
+			g.help = help_screen(g.help);
+			break;
 		case XK_d:
 			greeting();
 			break;
