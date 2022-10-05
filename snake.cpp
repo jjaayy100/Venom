@@ -48,9 +48,7 @@
 #include "log.h"
 //#include "ppm.h"
 #include "fonts.h"
-#include "jbankston.h"
-
-#include "jambriz.h"
+#include "help.h"
 
 #define USE_OPENAL_SOUND
 #ifdef USE_OPENAL_SOUND
@@ -165,15 +163,12 @@ struct Global {
 	int boardDim;
 	int gameover;
 	int winner;
+	int help;
 	Image *marbleImage;
 	GLuint marbleTexture;
 	Button button[MAXBUTTONS];
 	int nbuttons;
 	//
-	//=================================
-	//Jorge added this for credits
-	unsigned int credits;
-	//=================================
 	ALuint alBufferDrip, alBufferTick;
 	ALuint alSourceDrip, alSourceTick;
 	Global() {
@@ -184,7 +179,10 @@ struct Global {
 		winner = 0;
 		nbuttons = 0;
 		marbleImage=NULL;
-		credits = 0;
+
+		// help screen variable added by Yeana 
+		// help screen not up initially 
+		help = 0;
 	}
 } g;
 
@@ -562,18 +560,22 @@ void resetGame()
 //===============================
 extern int show_my_name();
 //================================
+//Oct3 Yeana added an extern function:
+//===============================
+// extern int help_screen(unsigned int h);
+//================================
+//================================
 //Darien added an extern function:
 //================================
 extern int greeting();
 //=================================
-//Jorge added an external function:
+//Jorge added an extern function:
 //=================================
 extern int jhello();
 //=================================
 //Jayden added an extern function:
 //=================================
 extern int Money();
-extern int youlost(); 
 //Param added an extern function:
 //=================================
 extern int CSUB();
@@ -602,6 +604,11 @@ int checkKeys(XEvent *e)
 		case XK_y:
 			show_my_name();
 			break;
+		case XK_h:
+			show_my_name();
+			g.help = help_screen(g.help);
+			break;
+
 		case XK_d:
 			greeting();
 			break;
@@ -633,9 +640,6 @@ int checkKeys(XEvent *e)
 			break;
 		case XK_Down:
 			g.snake.direction = DIRECTION_DOWN;
-			break;
-		case XK_c:
-			g.credits = set_credits_state(g.credits);
 			break;
 	}
 	return 0;
@@ -722,10 +726,6 @@ void physics(void)
 {
 	int i;
 	if (g.gameover)
-	{
-	    youlost(g.gameover);
-	    return;
-	}
 		return;
 	//
 	//
@@ -863,11 +863,6 @@ void render(void)
 		glTexCoord2f(1.0f, 0.0f); glVertex2i(g.xres, 0);
 	glEnd();
 	glBindTexture(GL_TEXTURE_2D, 0);
-	//draw you lost box 
-//	if (g.gameover)
-//	{
-//
-//	}
 	//
 	//draw all buttons
 	for (i=0; i<g.nbuttons; i++) {
@@ -988,11 +983,15 @@ void render(void)
 	r.bot    = g.yres-100;
 	r.center = 1;
 	ggprint16(&r, 16, 0x00ffffff, "Snake");
-	//And finally, the credits screen
-	if (g.credits)
-	{
-	    show_credits_screen(g.xres, g.yres);
+
+
+	if (g.help) {
+	    // show help screen
+	    show_help_screen(g.xres, g.yres);
+
+	    return;
 	}
+
 }
 
 
