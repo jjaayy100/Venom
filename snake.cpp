@@ -50,6 +50,9 @@
 //#include "ppm.h"
 #include "fonts.h"
 #include "jbankston.h"
+#include "ptakkar.h"
+#include "help.h"
+
 
 #define USE_OPENAL_SOUND
 #ifdef USE_OPENAL_SOUND
@@ -164,6 +167,8 @@ struct Global {
 	int boardDim;
 	int gameover;
 	int winner;
+	unsigned int p;
+	unsigned int help;
 	Image *marbleImage;
 	GLuint marbleTexture;
 	Button button[MAXBUTTONS];
@@ -179,6 +184,9 @@ struct Global {
 		winner = 0;
 		nbuttons = 0;
 		marbleImage=NULL;
+		p = 0;
+		help = 0;
+
 	}
 } g;
 
@@ -611,7 +619,7 @@ int checkKeys(XEvent *e)
 			Money();
 			break;
 		case XK_p:
-			CSUB();
+			pauseGame(g.p);
 			break;
 		case XK_equal:
 			g.snake.delay *= 0.9;
