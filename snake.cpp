@@ -597,6 +597,7 @@ int checkKeys(XEvent *e)
 			show_my_name();
 			break;
 		case XK_h:
+		// name and help screen will show
 			show_my_name();
 			g.help = help_screen(g.help);
 			break;
