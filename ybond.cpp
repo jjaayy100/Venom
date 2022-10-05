@@ -6,6 +6,6 @@ using namespace std;
 
 int show_my_name()
 {
-    cout << "Yeana\n" << endl;
+    cout << "Yeana.\n" << endl;
     return 0;
 }
