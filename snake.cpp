@@ -1,5 +1,4 @@
 //modified by: Yeana Bond
-//modified by: Jayden Bankston
 //Notes from Yeana: 
 //program: snake.cpp
 //author:  Gordon Griesel
@@ -49,7 +48,7 @@
 #include "log.h"
 //#include "ppm.h"
 #include "fonts.h"
-#include "jbankston.h"
+#include "dware.h"
 
 #define USE_OPENAL_SOUND
 #ifdef USE_OPENAL_SOUND
@@ -164,6 +163,7 @@ struct Global {
 	int boardDim;
 	int gameover;
 	int winner;
+	unsigned int startup;
 	Image *marbleImage;
 	GLuint marbleTexture;
 	Button button[MAXBUTTONS];
@@ -179,6 +179,8 @@ struct Global {
 		winner = 0;
 		nbuttons = 0;
 		marbleImage=NULL;
+		//initialize the startup screen as on
+		startup = 1;
 	}
 } g;
 
@@ -567,7 +569,6 @@ extern int jhello();
 //Jayden added an extern function:
 //=================================
 extern int Money();
-extern int youlost(); 
 //Param added an extern function:
 //=================================
 extern int CSUB();
@@ -595,6 +596,9 @@ int checkKeys(XEvent *e)
 			break;
 		case XK_y:
 			show_my_name();
+			break;
+		case XK_s:
+			g.startup = check_startup(g.startup);
 			break;
 		case XK_d:
 			greeting();
@@ -708,14 +712,13 @@ void getGridCenter(const int i, const int j, int cent[2])
 	cent[1] += (bq * i1);
 }
 
+
 void physics(void)
 {
 	int i;
 	if (g.gameover)
-	{
-	    youlost(g.gameover);
-	    return;
-	}
+		return;
+	//if(g.startup)
 	//
 	//
 	//Is it time to move the snake?
@@ -852,11 +855,6 @@ void render(void)
 		glTexCoord2f(1.0f, 0.0f); glVertex2i(g.xres, 0);
 	glEnd();
 	glBindTexture(GL_TEXTURE_2D, 0);
-	//draw you lost box 
-//	if (g.gameover)
-//	{
-//
-//	}
 	//
 	//draw all buttons
 	for (i=0; i<g.nbuttons; i++) {
@@ -977,6 +975,12 @@ void render(void)
 	r.bot    = g.yres-100;
 	r.center = 1;
 	ggprint16(&r, 16, 0x00ffffff, "Snake");
+
+
+	//Startup page should open on top of grid and game
+	if (g.startup) {
+	    show_startup(g.xres, g.yres);
+	}
 }
 
 
