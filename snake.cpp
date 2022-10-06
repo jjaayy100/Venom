@@ -1,5 +1,6 @@
 //modified by: Yeana Bond
 //modified by: Jayden Bankston
+//modified by: Darien Ware
 //Notes from Yeana: 
 //program: snake.cpp
 //author:  Gordon Griesel
@@ -52,6 +53,7 @@
 #include "jbankston.h"
 #include "ptakkar.h"
 #include "help.h"
+#include "dware.h"
 
 
 #define USE_OPENAL_SOUND
@@ -169,6 +171,7 @@ struct Global {
 	int winner;
 	unsigned int p;
 	unsigned int help;
+	unsigned int startup;
 	Image *marbleImage;
 	GLuint marbleTexture;
 	Button button[MAXBUTTONS];
@@ -186,6 +189,8 @@ struct Global {
 		marbleImage=NULL;
 		p = 0;
 		help = 0;
+		//initialize startup screen as on
+		startup = 1;
 
 	}
 } g;
@@ -609,6 +614,9 @@ int checkKeys(XEvent *e)
 			show_my_name();
 			g.help = help_screen(g.help);
 			break;
+		case XK_s:
+			g.startup = check_startup(g.startup);
+			break;			
 		case XK_d:
 			greeting();
 			break;
@@ -997,6 +1005,11 @@ void render(void)
 	    show_help_screen(g.xres, g.yres);
 
 	    return;
+	}
+	//Darien's Startup Screen
+	if (g.startup) {
+		//startup screen will automatically be toggled
+		show_startup(g.xres,g.yres);
 	}
 
 }
