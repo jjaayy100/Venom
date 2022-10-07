@@ -3,11 +3,16 @@
 // Oct 3
 //
 //
+using namespace std;
 #include <GL/glx.h>
 #include "fonts.h"
+#include <iostream>
 
 unsigned int help_screen(unsigned int h)
 {
+        float a;
+	a = 5 / 2;
+	cout << " " << a << "\n" << endl;
 	h = h ^ 1;
 	return h;
 
@@ -29,7 +34,7 @@ void show_help_screen(int xres, int yres)
     glEnd();
 
     Rect r;
-    glClear(GL_COLOR_BUFFER_BIT);
+    //glClear(GL_COLOR_BUFFER_BIT);
     r.bot = yres - 20;
     r.left = 10;
     r.center = 0;

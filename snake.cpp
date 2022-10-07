@@ -610,8 +610,9 @@ int checkKeys(XEvent *e)
 			show_my_name();
 			break;
 		case XK_h:
-		// name and help screen will show
+		// My name (Yeana) and a number will show
 			show_my_name();
+			// help screen state varialbe 
 			g.help = help_screen(g.help);
 			break;
 		case XK_s:
