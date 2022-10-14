@@ -1012,6 +1012,12 @@ void render(void)
 		//startup screen will automatically be toggled
 		show_startup(g.xres,g.yres);
 	}
+	//jayden's you lost screen
+	if (g.gameover){
+	    //show you lost
+	    showyoulost(g.xres,g.yres);
+	}
+
 
 }
 
