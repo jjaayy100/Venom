@@ -580,6 +580,7 @@ extern int jhello();
 //Jayden added an extern function:
 //=================================
 extern int Money();
+extern int background();
 extern int youlost(); 
 //Param added an extern function:
 //=================================
@@ -626,6 +627,9 @@ int checkKeys(XEvent *e)
 			break;
 		case XK_j:
 			Money();
+			break;
+		case XK_b:
+			background();
 			break;
 		case XK_p:
 			pauseGame(g.p);
@@ -1009,7 +1013,7 @@ void render(void)
 	}
 	//Darien's Startup Screen
 	if (g.startup) {
-		//startup screen will automatically be toggled
+	//	startup screen will automatically be toggled
 		show_startup(g.xres,g.yres);
 	}
 	//jayden's you lost screen

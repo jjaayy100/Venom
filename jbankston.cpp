@@ -28,9 +28,7 @@ void youlost(int lost)
     {
 	cout << "You Lost" << endl; 
 	lost++;
-    }
-
-   
+    }   
 }
 void showyoulost(int xres, int yres)
 {
@@ -50,4 +48,7 @@ void showyoulost(int xres, int yres)
     r.bot = ycent + 80;
     r.center = 50;
     ggprint16(&r, 50, 0xffffffff, "YOU LOST");
+}
+void background()
+{
 }
