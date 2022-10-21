@@ -243,7 +243,8 @@ public:
 	void setTitle() {
 		//Set the window title bar.
 		XMapWindow(dpy, win);
-		XStoreName(dpy, win, "snake");
+		//Changed to better reflect our personal game.
+		XStoreName(dpy, win, "Venom");
 	}
 	void setupScreenRes(const int w, const int h) {
 		g.xres = w;
@@ -1005,7 +1006,8 @@ void render(void)
 	r.left   = g.xres/2;
 	r.bot    = g.yres-100;
 	r.center = 1;
-	ggprint16(&r, 16, 0x00ffffff, "Snake");
+	//Changed to better fit out game
+	ggprint16(&r, 16, 0x00ffffff, "Venom");
 
 	//Yeana's help screen
 	if (g.help) {
