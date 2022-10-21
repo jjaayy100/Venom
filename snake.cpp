@@ -1,6 +1,7 @@
 //modified by: Yeana Bond
 //modified by: Jayden Bankston
 //modified by: Darien Ware
+//modified by: Jorge Ambriz
 //Notes from Yeana: 
 //program: snake.cpp
 //author:  Gordon Griesel
@@ -50,6 +51,7 @@
 #include "log.h"
 //#include "ppm.h"
 #include "fonts.h"
+#include "jambriz.h"
 #include "jbankston.h"
 #include "ptakkar.h"
 #include "help.h"
@@ -172,6 +174,7 @@ struct Global {
 	unsigned int p;
 	unsigned int help;
 	unsigned int startup;
+	unsigned int credits;
 	Image *marbleImage;
 	GLuint marbleTexture;
 	Button button[MAXBUTTONS];
@@ -185,6 +188,7 @@ struct Global {
 		gridDim = 40;
 		gameover = 0;
 		winner = 0;
+		credits =0;
 		nbuttons = 0;
 		marbleImage=NULL;
 		p = 0;
@@ -624,6 +628,9 @@ int checkKeys(XEvent *e)
 		case XK_a:
 			jhello();
 			break;
+		case XK_c:
+			g.credits = set_credits_state(g.credits);
+			break;
 		case XK_j:
 			Money();
 			break;
@@ -1016,6 +1023,11 @@ void render(void)
 	if (g.gameover){
 	    //show you lost
 	    showyoulost(g.xres,g.yres);
+	}
+	//Jorge's credits screen
+	if (g.credits) {
+		//toggle credits - apart from menu for now
+		show_credits_screen(g.xres, g.yres);
 	}
 
 
