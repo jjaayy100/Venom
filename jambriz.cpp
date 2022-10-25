@@ -6,7 +6,6 @@
 #include <cstring>
 #include <stdlib.h>
 #include <IL/il.h>
-#include "SOIL.h"
 using namespace std;
 
 
@@ -24,6 +23,7 @@ unsigned int set_credits_state(unsigned int credits)
 
 void show_credits_screen(int xres, int yres)
 {
+    /*
     //Render snake1.jpg on top of white rendered screen
     //  Using the tutorial from https://open.gl/textures
     GLuint tex;
@@ -36,8 +36,6 @@ void show_credits_screen(int xres, int yres)
     unsigned char* image = SOIL_load_image("snake1.jpg", &width, &height, 0, SOIL_LOAD_RGB);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
     SOIL_free_image_data(image);
-
-    /*
     GLuint tex;
     //int image;
     //GLuint texture = ("/home/jorge/downloads/snake1.jpg");
