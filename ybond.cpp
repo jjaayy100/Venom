@@ -31,5 +31,4 @@ float change_snake_color()
 
 
 }
-~
-~
+
