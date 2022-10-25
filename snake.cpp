@@ -1,6 +1,7 @@
 //modified by: Yeana Bond
 //modified by: Jayden Bankston
 //modified by: Darien Ware
+//modified by: Jorge Ambriz
 //Notes from Yeana: 
 //program: snake.cpp
 //author:  Gordon Griesel
@@ -50,6 +51,7 @@
 #include "log.h"
 //#include "ppm.h"
 #include "fonts.h"
+#include "jambriz.h"
 #include "jbankston.h"
 #include "ptakkar.h"
 #include "help.h"
@@ -172,6 +174,7 @@ struct Global {
 	unsigned int p;
 	unsigned int help;
 	unsigned int startup;
+	unsigned int credits;
 	Image *marbleImage;
 	GLuint marbleTexture;
 	Button button[MAXBUTTONS];
@@ -185,6 +188,7 @@ struct Global {
 		gridDim = 40;
 		gameover = 0;
 		winner = 0;
+		credits =0;
 		nbuttons = 0;
 		marbleImage=NULL;
 		p = 0;
@@ -239,7 +243,8 @@ public:
 	void setTitle() {
 		//Set the window title bar.
 		XMapWindow(dpy, win);
-		XStoreName(dpy, win, "snake");
+		//Changed to better reflect our personal game.
+		XStoreName(dpy, win, "Venom");
 	}
 	void setupScreenRes(const int w, const int h) {
 		g.xres = w;
@@ -624,6 +629,9 @@ int checkKeys(XEvent *e)
 		case XK_a:
 			jhello();
 			break;
+		case XK_c:
+			g.credits = set_credits_state(g.credits);
+			break;
 		case XK_j:
 			Money();
 			break;
@@ -998,7 +1006,8 @@ void render(void)
 	r.left   = g.xres/2;
 	r.bot    = g.yres-100;
 	r.center = 1;
-	ggprint16(&r, 16, 0x00ffffff, "Snake");
+	//Changed to better fit out game
+	ggprint16(&r, 16, 0x00ffffff, "Venom");
 
 	//Yeana's help screen
 	if (g.help) {
@@ -1012,6 +1021,17 @@ void render(void)
 		//startup screen will automatically be toggled
 		show_startup(g.xres,g.yres);
 	}
+	//jayden's you lost screen
+	if (g.gameover){
+	    //show you lost
+	    showyoulost(g.xres,g.yres);
+	}
+	//Jorge's credits screen
+	if (g.credits) {
+		//toggle credits - apart from menu for now
+		show_credits_screen(g.xres, g.yres);
+	}
+
 
 }
 
