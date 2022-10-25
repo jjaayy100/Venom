@@ -5,9 +5,7 @@
 #include <GL/glx.h>
 #include <cstring>
 #include <stdlib.h>
-
 using namespace std;
-
 
 int jhello()
 {
