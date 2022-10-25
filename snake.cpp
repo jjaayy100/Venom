@@ -173,6 +173,7 @@ struct Global {
 	int winner;
 	unsigned int p;
 	unsigned int help;
+	float changeSnakeColor;
 	unsigned int startup;
 	unsigned int credits;
 	Image *marbleImage;
@@ -193,6 +194,7 @@ struct Global {
 		marbleImage=NULL;
 		p = 0;
 		help = 0;
+		changeSnakeColor = 0.0;
 		//initialize startup screen as on
 		startup = 1;
 
@@ -573,6 +575,7 @@ void resetGame()
 //Yeana added an extern function:
 //===============================
 extern int show_my_name();
+extern float change_snake_color();
 //================================
 //Darien added an extern function:
 //================================
@@ -620,6 +623,15 @@ int checkKeys(XEvent *e)
 			// help screen state varialbe 
 			g.help = help_screen(g.help);
 			break;
+
+			case XK_z:
+                // To change the color of the snake
+                        g.changeSnakeColor = change_snake_color();
+                        //if (g.changeSnakeColor == 1) {
+                        //    g.changeSnakeColor = 0;
+                        //}
+                        break;
+
 		case XK_s:
 			g.startup = check_startup(g.startup);
 			break;			
@@ -959,7 +971,9 @@ void render(void)
 	//
 	//draw snake...
 	#ifdef COLORFUL_SNAKE
-	float c[3]={1.0f,1.0,0.5};
+	//float c[3]={1.0f,1.0,0.5};
+	float val = g.changeSnakeColor;
+	float c[3] = {val, val, val};
 	float rgb[3];
 	rgb[0] = -0.9 / (float)g.snake.length;
 	rgb[2] = -0.45 / (float)g.snake.length;
@@ -1016,6 +1030,18 @@ void render(void)
 
 	    return;
 	}
+
+	// Yeana's feature 1: change the snake color 
+        if (g.changeSnakeColor == 1.0) {
+
+            //red -= g.changeSnakeColor;
+            //green += g.changeSnakeColor;
+            //blue -= g.changeSnakeColor;
+
+            val = change_snake_color();
+
+        }
+
 	//Darien's Startup Screen
 	if (g.startup) {
 		//startup screen will automatically be toggled

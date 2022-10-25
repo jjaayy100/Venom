@@ -39,4 +39,11 @@ void show_help_screen(int xres, int yres)
     r.left = 10;
     r.center = 0;
     ggprint8b(&r, 16, 0x00ff0000, " HELP ");
+
+
+    r.bot = yres - 30;
+    r.left = 100;
+    r.center = 0;
+    ggprint8b(&r, 16, 0x00ff0000, " Press z: to change color of the snake ");
+
 }
