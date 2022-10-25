@@ -5,7 +5,7 @@
 #include <GL/glx.h>
 #include <cstring>
 #include <stdlib.h>
-#include <IL/il.h>
+
 using namespace std;
 
 
