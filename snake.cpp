@@ -171,11 +171,13 @@ struct Global {
 	int boardDim;
 	int gameover;
 	int winner;
+	int gamestart;
 	unsigned int p;
 	unsigned int help;
 	float changeSnakeColor;
 	unsigned int startup;
 	unsigned int credits;
+	unsigned int timestat;
 	Image *marbleImage;
 	GLuint marbleTexture;
 	Button button[MAXBUTTONS];
@@ -197,6 +199,7 @@ struct Global {
 		changeSnakeColor = 0.0;
 		//initialize startup screen as on
 		startup = 1;
+		gamestart = time(NULL);
 
 	}
 } g;
@@ -644,6 +647,9 @@ int checkKeys(XEvent *e)
 		case XK_c:
 			g.credits = set_credits_state(g.credits);
 			break;
+		case XK_m:
+			g.timestat = g.timestat ^ 1;
+			break;
 		case XK_j:
 			Money();
 			break;
@@ -1057,6 +1063,10 @@ void render(void)
 		//toggle credits - apart from menu for now
 		show_credits_screen(g.xres, g.yres);
 	}
+	//Jorge's Timer feature: timer
+	if ((g.timestat == 1) && (g.gameover != 1)){
+        timer(g.xres, g.yres, g.gamestart);
+    }
 
 
 }
