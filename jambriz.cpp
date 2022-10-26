@@ -11,15 +11,33 @@
 #include "fonts.h"
 using namespace std;
 
+struct Jlobal {
+    int gamestart;
+    int seconds;
+    int min;
+    int tmp;
+    Jlobal(){
+        gamestart = time(NULL);
+    }
+} j;
+
 int jhello()
 {
     cout << "Jorge" << endl;
     return 0;
 }
 
-void timer(int xres, int yres, int gamestart)
+int timer(int xres, int yres)
 {
-    int gamecount = time(NULL) - gamestart;
+    if (j.seconds == 60) {
+        j.tmp = time(NULL) - j.gamestart; //grab the 59 seconds
+        j.gamestart = j.gamestart + j.tmp; //Add them to the start
+        j.seconds = 0; //reset the seconds
+        j.min++; //Add a minute
+    }
+    else {
+        j.seconds = time(NULL) - j.gamestart; //count upwards
+    }
     Rect r;
     int w = 76;
     int h = w/2;
@@ -38,7 +56,16 @@ void timer(int xres, int yres, int gamestart)
     r.left = xpos-12;
     r.bot = ypos-15;
     r.center = 50;
-    ggprint16(&r, 50, 0xffffffff, "Playtime: %d",gamecount);
+    if (j.min<10 && j.seconds<10) {
+        ggprint16(&r, 50, 0xffffffff, "Timer: 0%d:0%d",j.min,j.seconds);
+    }
+    else if ((j.min<10 && j.seconds>10)) {
+        ggprint16(&r, 50, 0xffffffff, "Timer: 0%d:%d",j.min,j.seconds);
+    }
+    else {
+        ggprint16(&r, 50, 0xffffffff, "Timer: %d:%d",j.min,j.seconds);
+    }
+    return 0;
 }
 
 unsigned int set_credits_state(unsigned int credits) 

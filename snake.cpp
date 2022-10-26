@@ -199,7 +199,6 @@ struct Global {
 		changeSnakeColor = 0.0;
 		//initialize startup screen as on
 		startup = 1;
-		gamestart = time(NULL);
 
 	}
 } g;
@@ -1065,7 +1064,7 @@ void render(void)
 	}
 	//Jorge's Timer feature: timer
 	if ((g.timestat == 1) && (g.gameover != 1)){
-        timer(g.xres, g.yres, g.gamestart);
+        timer(g.xres, g.yres);
     }
 
 
