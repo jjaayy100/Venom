@@ -53,17 +53,17 @@ int timer(int xres, int yres)
         glVertex2f( w, -h);
         glEnd();
     glPopMatrix();
-    r.left = xpos-12;
-    r.bot = ypos-15;
+    r.left = xpos;
+    r.bot = ypos-8;
     r.center = 50;
     if (j.min<10 && j.seconds<10) {
-        ggprint16(&r, 50, 0xffffffff, "Timer: 0%d:0%d",j.min,j.seconds);
+        ggprint16(&r, 50, 0xffffffff, "Time: 0%d:0%d",j.min,j.seconds);
     }
     else if ((j.min<10 && j.seconds>10)) {
-        ggprint16(&r, 50, 0xffffffff, "Timer: 0%d:%d",j.min,j.seconds);
+        ggprint16(&r, 50, 0xffffffff, "Time: 0%d:%d",j.min,j.seconds);
     }
     else {
-        ggprint16(&r, 50, 0xffffffff, "Timer: %d:%d",j.min,j.seconds);
+        ggprint16(&r, 50, 0xffffffff, "Time: %d:%d",j.min,j.seconds);
     }
     return 0;
 }
