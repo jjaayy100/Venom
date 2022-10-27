@@ -194,7 +194,7 @@ struct Global {
 		gridDim = 40;
 		gameover = 0;
 		winner = 0;
-		credits =0;
+		credits = 0;
 		nbuttons = 0;
 		marbleImage=NULL;
 		snakecimage=NULL;
@@ -372,6 +372,8 @@ int main(int argc, char *argv[])
 		//Always render every frame.
 		render();
 		x11.swapBuffers();
+		//Send data to jambriz.cpp file for Jlobal(Still in testing)
+		get_class_data(g.gameover, g.timestat);
 	}
 	cleanupSound();
 	cleanup_fonts();
@@ -630,6 +632,9 @@ int checkKeys(XEvent *e)
 	switch (key) {
 		case XK_r:
 			resetGame();
+			break;
+		case XK_Escape:
+			exit(0);
 			break;
 		case XK_y:
 			show_my_name();
@@ -1076,11 +1081,14 @@ void render(void)
 	}
 	//Jorge's credits screen
 	if (g.credits) {
-		//toggle credits - apart from menu for now
+		//toggle credits - seperate from a menu option for now
 		show_credits_screen(g.xres, g.yres, g.snakectexture);
 	}
-	//Jorge's Timer feature: timer
-	if ((g.timestat == 1) && (g.gameover != 1)){
+	//Jorge's Timer feature: don't want to show it if any other screen is on
+	if ((g.timestat == 1) &&
+		(g.gameover != 1) && 
+		(g.credits != 1 ) && 
+		(g.startup != 1 )) {
         timer(g.xres, g.yres);
     }
 

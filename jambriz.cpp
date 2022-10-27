@@ -1,5 +1,6 @@
 //Jorge Ambriz
-//Source functions
+//CMPS 3350-SE
+//Source file
 
 #include <iostream>
 #include <GL/glx.h>
@@ -13,13 +14,29 @@ using namespace std;
 
 struct Jlobal {
     int gamestart;
+    int gameover;
+    int timerstart;
     int seconds;
     int min;
     int tmp;
     Jlobal(){
         gamestart = time(NULL);
+        timerstart = time(NULL);
     }
 } j;
+
+//This function will update values from the Global class in snake.cpp
+//to Jlobal in this source file to increase functionality
+void get_class_data(int gameover, int timestat)
+{
+    //For timer behavior
+    j.gameover = gameover;
+    if ((timestat == 0 || j.gameover == 1)) {
+            j.timerstart = time(NULL);
+            j.seconds = 0;
+            j.min = 0;
+    }
+}
 
 int jhello()
 {
@@ -29,14 +46,14 @@ int jhello()
 
 int timer(int xres, int yres)
 {
-    if (j.seconds == 60) {
-        j.tmp = time(NULL) - j.gamestart; //grab the 59 seconds
-        j.gamestart = j.gamestart + j.tmp; //Add them to the start
+    if (j.seconds >= 60) {
+        j.tmp = time(NULL) - j.timerstart; //grab the 59 seconds
+        j.timerstart = j.timerstart + j.tmp; //Add them to the start
         j.seconds = 0; //reset the seconds
         j.min++; //Add a minute
     }
     else {
-        j.seconds = time(NULL) - j.gamestart; //count upwards
+        j.seconds = time(NULL) - j.timerstart; //count upwards
     }
     Rect r;
     int w = 76;
@@ -56,11 +73,15 @@ int timer(int xres, int yres)
     r.left = xpos;
     r.bot = ypos-8;
     r.center = 50;
+    //Display time in the corect 00:00 (min:sec) format
     if (j.min<10 && j.seconds<10) {
         ggprint16(&r, 50, 0xffffffff, "Time: 0%d:0%d",j.min,j.seconds);
     }
-    else if ((j.min<10 && j.seconds>10)) {
+    else if (j.min<10 && j.seconds>=10) {
         ggprint16(&r, 50, 0xffffffff, "Time: 0%d:%d",j.min,j.seconds);
+    }
+    else if (j.min>=10 && j.seconds<10) {
+        ggprint16(&r, 50, 0xffffffff, "Time: %d:0%d",j.min,j.seconds);
     }
     else {
         ggprint16(&r, 50, 0xffffffff, "Time: %d:%d",j.min,j.seconds);
