@@ -14,6 +14,7 @@ using namespace std;
 
 struct Jlobal {
     int gamestart;
+    int reset;
     int gameover;
     int timerstart;
     int seconds;
@@ -25,13 +26,14 @@ struct Jlobal {
     }
 } j;
 
-//This function will update values from the Global class in snake.cpp
+//This function will update values from the Global struct in snake.cpp
 //to Jlobal in this source file to increase functionality
-void get_class_data(int gameover, int timestat)
+void get_class_data(int gameover, int timestat, int reset)
 {
     //For timer behavior
     j.gameover = gameover;
-    if ((timestat == 0 || j.gameover == 1)) {
+    j.reset = reset;
+    if (timestat == 0 || j.gameover == 1 || reset == 1) {
             j.timerstart = time(NULL);
             j.seconds = 0;
             j.min = 0;

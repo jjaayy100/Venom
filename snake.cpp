@@ -179,6 +179,7 @@ struct Global {
 	unsigned int startup;
 	unsigned int credits;
 	unsigned int timestat;
+	unsigned int reset;
 	Image *marbleImage;
 	Image *snakecimage;
 	GLuint marbleTexture;
@@ -196,6 +197,7 @@ struct Global {
 		winner = 0;
 		credits = 0;
 		nbuttons = 0;
+		reset = 0;
 		marbleImage=NULL;
 		snakecimage=NULL;
 		p = 0;
@@ -373,7 +375,10 @@ int main(int argc, char *argv[])
 		render();
 		x11.swapBuffers();
 		//Send data to jambriz.cpp file for Jlobal(Still in testing)
-		get_class_data(g.gameover, g.timestat);
+		get_class_data(g.gameover, g.timestat, g.reset);
+		if(g.reset) {
+			g.reset = 0;
+		}
 	}
 	cleanupSound();
 	cleanup_fonts();
@@ -588,6 +593,7 @@ void resetGame()
 	initRat();
 	g.gameover  = 0;
 	g.winner    = 0;
+	g.reset = 1;
 }
 
 //================================
