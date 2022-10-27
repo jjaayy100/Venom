@@ -159,7 +159,8 @@ public:
 			unlink(ppmname);
 	}
 };
-Image img[1] = {"./images/marble.gif" };
+Image img[2] = {"./images/marble.gif",
+				 "./images/snake1.jpg"};
 
 
 struct Global {
@@ -179,7 +180,9 @@ struct Global {
 	unsigned int credits;
 	unsigned int timestat;
 	Image *marbleImage;
+	Image *snakecimage;
 	GLuint marbleTexture;
+	GLuint snakectexture;
 	Button button[MAXBUTTONS];
 	int nbuttons;
 	//
@@ -194,6 +197,7 @@ struct Global {
 		credits =0;
 		nbuttons = 0;
 		marbleImage=NULL;
+		snakecimage=NULL;
 		p = 0;
 		help = 0;
 		changeSnakeColor = 0.0;
@@ -470,11 +474,14 @@ void initOpengl(void)
 	glEnable(GL_TEXTURE_2D);
 	//marble_texture = loadBMP("marble.bmp");
 	glBindTexture(GL_TEXTURE_2D, 0);
+	//for snaketexture
+	glBindTexture(GL_TEXTURE_2D, 1);
 	//
 	//load the image file into a ppm structure.
 	//
 	//g.marbleImage = ppm6GetImage("./images/marble.ppm");
 	g.marbleImage = &img[0];
+	g.snakecimage = &img[1];
 	//
 	//create opengl texture elements
 	glGenTextures(1, &g.marbleTexture);
@@ -484,6 +491,14 @@ void initOpengl(void)
 	glTexImage2D(GL_TEXTURE_2D, 0, 3,
 	             g.marbleImage->width, g.marbleImage->height,
 	             0, GL_RGB, GL_UNSIGNED_BYTE, g.marbleImage->data);
+	//For Credits screen
+	glGenTextures(1, &g.snakectexture);
+	glBindTexture(GL_TEXTURE_2D, g.snakectexture);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3,
+	             g.snakecimage->width, g.snakecimage->height,
+	             0, GL_RGB, GL_UNSIGNED_BYTE, g.snakecimage->data);
 }
 
 void initSnake()
@@ -723,7 +738,9 @@ int checkMouse(XEvent *e)
 							break;
 						case 1:
 							printf("Quit was clicked!\n");
-							return 1;
+							//temporary fix for the quit button
+							exit(0);
+							break;
 					}
 				}
 			}
@@ -1060,7 +1077,7 @@ void render(void)
 	//Jorge's credits screen
 	if (g.credits) {
 		//toggle credits - apart from menu for now
-		show_credits_screen(g.xres, g.yres);
+		show_credits_screen(g.xres, g.yres, g.snakectexture);
 	}
 	//Jorge's Timer feature: timer
 	if ((g.timestat == 1) && (g.gameover != 1)){
