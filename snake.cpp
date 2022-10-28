@@ -1,6 +1,7 @@
 //modified by: Yeana Bond
 //modified by: Jayden Bankston
 //modified by: Darien Ware
+//modified by: Jorge Ambriz
 //Notes from Yeana: 
 //program: snake.cpp
 //author:  Gordon Griesel
@@ -50,6 +51,7 @@
 #include "log.h"
 //#include "ppm.h"
 #include "fonts.h"
+#include "jambriz.h"
 #include "jbankston.h"
 #include "ptakkar.h"
 #include "help.h"
@@ -157,7 +159,8 @@ public:
 			unlink(ppmname);
 	}
 };
-Image img[1] = {"./images/marble.gif" };
+Image img[2] = {"./images/marble.gif",
+				 "./images/snake1.jpg"};
 
 
 struct Global {
@@ -169,12 +172,19 @@ struct Global {
 	int boardDim;
 	int gameover;
 	int winner;
+	int gamestart;
 	unsigned int p;
 	unsigned int help;
+	float changeSnakeColor;
 	unsigned int startup;
 	unsigned int mapsize;
+	unsigned int credits;
+	unsigned int timestat;
+	unsigned int reset;
 	Image *marbleImage;
+	Image *snakecimage;
 	GLuint marbleTexture;
+	GLuint snakectexture;
 	Button button[MAXBUTTONS];
 	int nbuttons;
 	//
@@ -186,10 +196,14 @@ struct Global {
 		gridDim = 40;
 		gameover = 0;
 		winner = 0;
+		credits = 0;
 		nbuttons = 0;
+		reset = 0;
 		marbleImage=NULL;
+		snakecimage=NULL;
 		p = 0;
 		help = 0;
+		changeSnakeColor = 0.0;
 		//initialize startup screen as on
 		startup = 1;
 		mapsize = 0;
@@ -241,7 +255,8 @@ public:
 	void setTitle() {
 		//Set the window title bar.
 		XMapWindow(dpy, win);
-		XStoreName(dpy, win, "snake");
+		//Changed to better reflect our personal game.
+		XStoreName(dpy, win, "Venom");
 	}
 	void setupScreenRes(const int w, const int h) {
 		g.xres = w;
@@ -361,6 +376,11 @@ int main(int argc, char *argv[])
 		//Always render every frame.
 		render();
 		x11.swapBuffers();
+		//Send data to jambriz.cpp file for Jlobal(Still in testing)
+		get_class_data(g.gameover, g.timestat, g.reset);
+		if(g.reset) {
+			g.reset = 0;
+		}
 	}
 	cleanupSound();
 	cleanup_fonts();
@@ -463,11 +483,14 @@ void initOpengl(void)
 	glEnable(GL_TEXTURE_2D);
 	//marble_texture = loadBMP("marble.bmp");
 	glBindTexture(GL_TEXTURE_2D, 0);
+	//for snaketexture
+	glBindTexture(GL_TEXTURE_2D, 1);
 	//
 	//load the image file into a ppm structure.
 	//
 	//g.marbleImage = ppm6GetImage("./images/marble.ppm");
 	g.marbleImage = &img[0];
+	g.snakecimage = &img[1];
 	//
 	//create opengl texture elements
 	glGenTextures(1, &g.marbleTexture);
@@ -477,6 +500,14 @@ void initOpengl(void)
 	glTexImage2D(GL_TEXTURE_2D, 0, 3,
 	             g.marbleImage->width, g.marbleImage->height,
 	             0, GL_RGB, GL_UNSIGNED_BYTE, g.marbleImage->data);
+	//For Credits screen
+	glGenTextures(1, &g.snakectexture);
+	glBindTexture(GL_TEXTURE_2D, g.snakectexture);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3,
+	             g.snakecimage->width, g.snakecimage->height,
+	             0, GL_RGB, GL_UNSIGNED_BYTE, g.snakecimage->data);
 }
 
 void initSnake()
@@ -564,12 +595,14 @@ void resetGame()
 	initRat();
 	g.gameover  = 0;
 	g.winner    = 0;
+	g.reset = 1;
 }
 
 //================================
 //Yeana added an extern function:
 //===============================
 extern int show_my_name();
+extern float change_snake_color();
 //================================
 //Darien added an extern function:
 //================================
@@ -608,14 +641,27 @@ int checkKeys(XEvent *e)
 		case XK_r:
 			resetGame();
 			break;
+		case XK_Escape:
+			exit(0);
+			break;
 		case XK_y:
 			show_my_name();
 			break;
 		case XK_h:
-		// name and help screen will show
+		// My name (Yeana) and a number will show
 			show_my_name();
+			// help screen state varialbe 
 			g.help = help_screen(g.help);
 			break;
+
+			case XK_z:
+                // To change the color of the snake
+                        g.changeSnakeColor = change_snake_color();
+                        //if (g.changeSnakeColor == 1) {
+                        //    g.changeSnakeColor = 0;
+                        //}
+                        break;
+
 		case XK_s:
 			g.startup = check_startup(g.startup);
 			break;
@@ -627,6 +673,12 @@ int checkKeys(XEvent *e)
 			break;
 		case XK_a:
 			jhello();
+			break;
+		case XK_c:
+			g.credits = set_credits_state(g.credits);
+			break;
+		case XK_m:
+			g.timestat = g.timestat ^ 1;
 			break;
 		case XK_j:
 			Money();
@@ -702,7 +754,9 @@ int checkMouse(XEvent *e)
 							break;
 						case 1:
 							printf("Quit was clicked!\n");
-							return 1;
+							//temporary fix for the quit button
+							exit(0);
+							break;
 					}
 				}
 			}
@@ -955,7 +1009,9 @@ void render(void)
 	//
 	//draw snake...
 	#ifdef COLORFUL_SNAKE
-	float c[3]={1.0f,1.0,0.5};
+	//float c[3]={1.0f,1.0,0.5};
+	float val = g.changeSnakeColor;
+	float c[3] = {val, val, val};
 	float rgb[3];
 	rgb[0] = -0.9 / (float)g.snake.length;
 	rgb[2] = -0.45 / (float)g.snake.length;
@@ -1002,6 +1058,8 @@ void render(void)
 	r.left   = g.xres/2;
 	r.bot    = g.yres-100;
 	r.center = 1;
+
+	//Changed to better fit out game
 	ggprint16(&r, 16, 0x00ffffff, "Venom");
 
 	//Yeana's help screen
@@ -1011,6 +1069,18 @@ void render(void)
 
 	    return;
 	}
+
+	// Yeana's feature 1: change the snake color 
+        if (g.changeSnakeColor == 1.0) {
+
+            //red -= g.changeSnakeColor;
+            //green += g.changeSnakeColor;
+            //blue -= g.changeSnakeColor;
+
+            val = change_snake_color();
+
+        }
+
 	//Darien's Startup Screen
 	if (g.startup) {
 		//startup screen will automatically be toggled
@@ -1020,6 +1090,23 @@ void render(void)
 		//render the map resize
 		resize_map(g.xres, g.yres, g.boardDim, g.gridDim);
 	}
+	//jayden's you lost screen
+	if (g.gameover){
+	    //show you lost
+	    showyoulost(g.xres,g.yres);
+	}
+	//Jorge's credits screen
+	if (g.credits) {
+		//toggle credits - seperate from a menu option for now
+		show_credits_screen(g.xres, g.yres, g.snakectexture);
+	}
+	//Jorge's Timer feature: don't want to show it if any other screen is on
+	if ((g.timestat == 1) &&
+		(g.gameover != 1) && 
+		(g.credits != 1 ) && 
+		(g.startup != 1 )) {
+        timer(g.xres, g.yres);
+    }
 
 }
 

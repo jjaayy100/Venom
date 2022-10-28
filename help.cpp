@@ -3,11 +3,16 @@
 // Oct 3
 //
 //
+using namespace std;
 #include <GL/glx.h>
 #include "fonts.h"
+#include <iostream>
 
 unsigned int help_screen(unsigned int h)
 {
+        float a;
+	a = 5 / 2;
+	cout << " " << a << "\n" << endl;
 	h = h ^ 1;
 	return h;
 
@@ -29,9 +34,16 @@ void show_help_screen(int xres, int yres)
     glEnd();
 
     Rect r;
-    glClear(GL_COLOR_BUFFER_BIT);
+    //glClear(GL_COLOR_BUFFER_BIT);
     r.bot = yres - 20;
     r.left = 10;
     r.center = 0;
     ggprint8b(&r, 16, 0x00ff0000, " HELP ");
+
+
+    r.bot = yres - 30;
+    r.left = 100;
+    r.center = 0;
+    ggprint8b(&r, 16, 0x00ff0000, " Press z: to change color of the snake ");
+
 }
