@@ -172,6 +172,7 @@ struct Global {
 	unsigned int p;
 	unsigned int help;
 	unsigned int startup;
+	unsigned int mapsize;
 	Image *marbleImage;
 	GLuint marbleTexture;
 	Button button[MAXBUTTONS];
@@ -191,6 +192,7 @@ struct Global {
 		help = 0;
 		//initialize startup screen as on
 		startup = 1;
+		mapsize = 0;
 
 	}
 } g;
@@ -616,7 +618,10 @@ int checkKeys(XEvent *e)
 			break;
 		case XK_s:
 			g.startup = check_startup(g.startup);
-			break;			
+			break;
+		case XK_k:
+			g.mapsize = check_map(g.mapsize);
+			break;
 		case XK_d:
 			greeting();
 			break;
@@ -997,7 +1002,7 @@ void render(void)
 	r.left   = g.xres/2;
 	r.bot    = g.yres-100;
 	r.center = 1;
-	ggprint16(&r, 16, 0x00ffffff, "Snake");
+	ggprint16(&r, 16, 0x00ffffff, "Venom");
 
 	//Yeana's help screen
 	if (g.help) {
@@ -1010,6 +1015,10 @@ void render(void)
 	if (g.startup) {
 		//startup screen will automatically be toggled
 		show_startup(g.xres,g.yres);
+	}
+	if (g.mapsize) {
+		//render the map resize
+		resize_map(g.xres, g.yres, g.boardDim, g.gridDim);
 	}
 
 }
