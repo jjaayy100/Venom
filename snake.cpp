@@ -177,6 +177,7 @@ struct Global {
 	unsigned int help;
 	float changeSnakeColor;
 	unsigned int startup;
+	unsigned int mapsize;
 	unsigned int credits;
 	unsigned int timestat;
 	unsigned int reset;
@@ -205,6 +206,7 @@ struct Global {
 		changeSnakeColor = 0.0;
 		//initialize startup screen as on
 		startup = 1;
+		mapsize = 0;
 
 	}
 } g;
@@ -662,7 +664,10 @@ int checkKeys(XEvent *e)
 
 		case XK_s:
 			g.startup = check_startup(g.startup);
-			break;			
+			break;
+		case XK_k:
+			g.mapsize = check_map(g.mapsize);
+			break;
 		case XK_d:
 			greeting();
 			break;
@@ -1053,6 +1058,7 @@ void render(void)
 	r.left   = g.xres/2;
 	r.bot    = g.yres-100;
 	r.center = 1;
+
 	//Changed to better fit out game
 	ggprint16(&r, 16, 0x00ffffff, "Venom");
 
@@ -1080,6 +1086,10 @@ void render(void)
 		//startup screen will automatically be toggled
 		show_startup(g.xres,g.yres);
 	}
+	if (g.mapsize) {
+		//render the map resize
+		resize_map(g.xres, g.yres, g.boardDim, g.gridDim);
+	}
 	//jayden's you lost screen
 	if (g.gameover){
 	    //show you lost
@@ -1097,7 +1107,6 @@ void render(void)
 		(g.startup != 1 )) {
         timer(g.xres, g.yres);
     }
-
 
 }
 
