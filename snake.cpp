@@ -53,7 +53,7 @@
 #include "fonts.h"
 #include "jambriz.h"
 #include "jbankston.h"
-#include "ptakkar.h"
+//#include "ptakkar.h"
 #include "help.h"
 #include "dware.h"
 
@@ -173,7 +173,7 @@ struct Global {
 	int gameover;
 	int winner;
 	int gamestart;
-	unsigned int p;
+	unsigned int pause;
 	unsigned int help;
 	float changeSnakeColor;
 	unsigned int startup;
@@ -201,7 +201,7 @@ struct Global {
 		reset = 0;
 		marbleImage=NULL;
 		snakecimage=NULL;
-		p = 0;
+		pause = 0;
 		help = 0;
 		changeSnakeColor = 0.0;
 		//initialize startup screen as on
@@ -377,7 +377,7 @@ int main(int argc, char *argv[])
 		render();
 		x11.swapBuffers();
 		//Send data to jambriz.cpp file for Jlobal(Still in testing)
-		get_class_data(g.gameover, g.timestat, g.reset);
+		get_class_data(g.gameover, g.timestat, g.reset, g.pause);
 		if(g.reset) {
 			g.reset = 0;
 		}
@@ -684,7 +684,7 @@ int checkKeys(XEvent *e)
 			Money();
 			break;
 		case XK_p:
-			pauseGame(g.p);
+			g.pause = pauseGame(g.pause);
 			break;
 		case XK_equal:
 			g.snake.delay *= 0.9;
@@ -790,6 +790,9 @@ void getGridCenter(const int i, const int j, int cent[2])
 
 void physics(void)
 {
+	while(g.pause){
+		return;
+	}
 	int i;
 	if (g.gameover)
 	{
@@ -1106,6 +1109,10 @@ void render(void)
 		(g.credits != 1 ) && 
 		(g.startup != 1 )) {
         timer(g.xres, g.yres);
+    }
+	//Pause screen
+	if (g.pause) {
+	   	show_pauseScreen(g.xres, g.yres);
     }
 
 }

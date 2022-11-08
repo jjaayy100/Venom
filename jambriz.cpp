@@ -20,6 +20,7 @@ struct Jlobal {
     int seconds;
     int min;
     int tmp;
+    int pause;
     Jlobal(){
         gamestart = time(NULL);
         timerstart = time(NULL);
@@ -27,9 +28,10 @@ struct Jlobal {
 } j;
 
 //This function will update values from the Global struct in snake.cpp
-//to Jlobal in this source file to increase functionality
-void get_class_data(int gameover, int timestat, int reset)
+//to Jlobal in this source file to increase functionality. This could be improved.
+void get_class_data(int gameover, int timestat, int reset, int pause)
 {
+    j.pause = pause;
     //For timer behavior
     j.gameover = gameover;
     j.reset = reset;
@@ -97,6 +99,12 @@ unsigned int set_credits_state(unsigned int credits)
     return credits;
 }
 
+unsigned int pauseGame(unsigned int p)
+{
+    p = p ^ 1;
+    return p;
+}
+
 void show_credits_screen(int xres, int yres, GLuint snakectexture)
 {
     glColor3f(1.0f, 1.0f, 1.0f);
@@ -122,4 +130,27 @@ void show_credits_screen(int xres, int yres, GLuint snakectexture)
     	glVertex2f(xcent+w, ycent-w);
     glEnd();
     */
+}
+
+void show_pauseScreen(int xres, int yres)
+{
+    Rect r;
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
+    //glColor3f(1.0, 1.0, 1.0);
+    glColor4f(0.0, 0.0, 0.0, 0.5);
+    glBegin(GL_QUADS);
+        glVertex2i(0,       0);
+		glVertex2i(0,    yres);
+		glVertex2i(xres, yres);
+        glVertex2i(xres,    0);
+    glEnd();
+    glDisable(GL_BLEND);
+    r.left = xres/2;
+    r.bot = yres/2;
+    r.center = 50;
+    ggprint16(&r, 50, 0xffffffff, "Paused");
+
+
+
 }
