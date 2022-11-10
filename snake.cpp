@@ -1110,12 +1110,12 @@ void render(void)
         timer(g.xres, g.yres);
     }
 	//Pause screen
-	if (g.pause) {
+	if ((g.pause == 1)    &&
+        (g.gameover != 1) &&
+        (g.credits != 1)  && 
+        (g.startup != 1)) {
 	   	show_pauseScreen(g.xres, g.yres);
     }
 
 }
-
-
-
 
