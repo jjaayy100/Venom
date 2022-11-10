@@ -53,7 +53,6 @@
 #include "fonts.h"
 #include "jambriz.h"
 #include "jbankston.h"
-//#include "ptakkar.h"
 #include "help.h"
 #include "dware.h"
 

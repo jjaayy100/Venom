@@ -141,8 +141,8 @@ void show_pauseScreen(int xres, int yres)
     glColor4f(0.0, 0.0, 0.0, 0.5);
     glBegin(GL_QUADS);
         glVertex2i(0,       0);
-		glVertex2i(0,    yres);
-		glVertex2i(xres, yres);
+        glVertex2i(0,    yres);
+        glVertex2i(xres, yres);
         glVertex2i(xres,    0);
     glEnd();
     glDisable(GL_BLEND);
