@@ -158,9 +158,12 @@ public:
 			unlink(ppmname);
 	}
 };
-Image img[3] = {"./images/snake1.jpg",
+Image img[6] = {"./images/snake1.jpg",
 				"./images/marble.gif",
-				"./images/pattern_sand.jpg"};
+				"./images/pattern_sand.jpg",
+				"./images/roof_distance.jpg",
+				"./images/exotic_plants_side.jpg",
+				"./images/stream_horizontal.jpg"};
 
 
 struct Global {
@@ -184,9 +187,15 @@ struct Global {
 	unsigned int reset;
 	Image *background;
 	Image *background2;
+	Image *background3;
+	Image *background4;
+	Image *background5;
 	Image *snakecimage;
 	GLuint BackgroundTexture;
 	GLuint BackgroundTexture2;
+	GLuint BackgroundTexture3;
+	GLuint BackgroundTexture4;
+	GLuint BackgroundTexture5;
 	GLuint snakectexture;
 	Button button[MAXBUTTONS];
 	int nbuttons;
@@ -204,6 +213,9 @@ struct Global {
 		reset = 0;
 		background=NULL;
 		background2=NULL;
+		background3=NULL;
+		background4=NULL;
+		background5=NULL;
 		snakecimage=NULL;
 		setbackground = 1;
 		pause = 0;
@@ -403,7 +415,7 @@ void initSound()
 	}
 	//Clear error state.
 	alGetError();
-	//
+	//g.background3 = &img[3];
 	//Setup the listener.
 	//Forward and up vectors are used.
 	float vec[6] = {0.0f,0.0f,1.0f, 0.0f,1.0f,0.0f};
@@ -497,6 +509,9 @@ void initOpengl(void)
 	g.snakecimage = &img[0];
 	g.background = &img[1];
 	g.background2 = &img[2];
+	g.background3 = &img[3];
+	g.background4 = &img[4];
+	g.background5 = &img[5];
 	
 	//
 	//create opengl texture elements
@@ -516,6 +531,30 @@ void initOpengl(void)
 	glTexImage2D(GL_TEXTURE_2D, 0, 3,
 	             g.background2->width, g.background2->height,
 	             0, GL_RGB, GL_UNSIGNED_BYTE, g.background2->data);
+	//Roof background
+	glGenTextures(1, &g.BackgroundTexture3);
+	glBindTexture(GL_TEXTURE_2D, g.BackgroundTexture3);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3,
+	             g.background3->width, g.background3->height,
+	             0, GL_RGB, GL_UNSIGNED_BYTE, g.background3->data);
+	//Exotic plants background
+	glGenTextures(1, &g.BackgroundTexture4);
+	glBindTexture(GL_TEXTURE_2D, g.BackgroundTexture4);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3,
+	             g.background4->width, g.background4->height,
+	             0, GL_RGB, GL_UNSIGNED_BYTE, g.background4->data);
+	//Horizontal stream background
+	glGenTextures(1, &g.BackgroundTexture5);
+	glBindTexture(GL_TEXTURE_2D, g.BackgroundTexture5);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3,
+	             g.background5->width, g.background5->height,
+	             0, GL_RGB, GL_UNSIGNED_BYTE, g.background5->data);
 	//For Credits screen
 	glGenTextures(1, &g.snakectexture);
 	glBindTexture(GL_TEXTURE_2D, g.snakectexture);
@@ -946,7 +985,11 @@ void render(void)
 	//
 
 	//screen background-------------------------------------
-	display_background(g.BackgroundTexture, g.BackgroundTexture2, g.xres, g.yres, g.setbackground);
+	display_background(g.BackgroundTexture,
+					   g.BackgroundTexture2,
+					   g.BackgroundTexture3,
+					   g.BackgroundTexture4,
+					   g.BackgroundTexture5, g.xres, g.yres, g.setbackground);
 
 	/* //old background render code
 	glColor3f(0.5f, 0.5f, 0.5f);
