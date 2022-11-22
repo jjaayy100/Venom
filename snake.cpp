@@ -53,7 +53,6 @@
 #include "fonts.h"
 #include "jambriz.h"
 #include "jbankston.h"
-#include "ptakkar.h"
 #include "help.h"
 #include "dware.h"
 
@@ -159,7 +158,12 @@ public:
 			unlink(ppmname);
 	}
 };
-Image img[1] = {"./images/marble.gif" };
+Image img[6] = {"./images/snake1.jpg",
+				"./images/marble.gif",
+				"./images/pattern_sand.jpg",
+				"./images/roof_distance.jpg",
+				"./images/exotic_plants_side.jpg",
+				"./images/stream_horizontal.jpg"};
 
 
 struct Global {
@@ -171,13 +175,28 @@ struct Global {
 	int boardDim;
 	int gameover;
 	int winner;
-	unsigned int p;
+	int gamestart;
+	unsigned int setbackground;
+	unsigned int pause;
 	unsigned int help;
 	float changeSnakeColor;
 	unsigned int startup;
+	unsigned int mapsize;
 	unsigned int credits;
-	Image *marbleImage;
-	GLuint marbleTexture;
+	unsigned int timestat;
+	unsigned int reset;
+	Image *background;
+	Image *background2;
+	Image *background3;
+	Image *background4;
+	Image *background5;
+	Image *snakecimage;
+	GLuint BackgroundTexture;
+	GLuint BackgroundTexture2;
+	GLuint BackgroundTexture3;
+	GLuint BackgroundTexture4;
+	GLuint BackgroundTexture5;
+	GLuint snakectexture;
 	Button button[MAXBUTTONS];
 	int nbuttons;
 	//
@@ -189,14 +208,22 @@ struct Global {
 		gridDim = 40;
 		gameover = 0;
 		winner = 0;
-		credits =0;
+		credits = 0;
 		nbuttons = 0;
-		marbleImage=NULL;
-		p = 0;
+		reset = 0;
+		background=NULL;
+		background2=NULL;
+		background3=NULL;
+		background4=NULL;
+		background5=NULL;
+		snakecimage=NULL;
+		setbackground = 1;
+		pause = 0;
 		help = 0;
 		changeSnakeColor = 0.0;
 		//initialize startup screen as on
 		startup = 1;
+		mapsize = 0;
 
 	}
 } g;
@@ -366,6 +393,11 @@ int main(int argc, char *argv[])
 		//Always render every frame.
 		render();
 		x11.swapBuffers();
+		//Send data to jambriz.cpp file for Jlobal(Still in testing)
+		get_class_data(g.gameover, g.timestat, g.reset, g.pause);
+		if(g.reset) {
+			g.reset = 0;
+		}
 	}
 	cleanupSound();
 	cleanup_fonts();
@@ -383,7 +415,7 @@ void initSound()
 	}
 	//Clear error state.
 	alGetError();
-	//
+	//g.background3 = &img[3];
 	//Setup the listener.
 	//Forward and up vectors are used.
 	float vec[6] = {0.0f,0.0f,1.0f, 0.0f,1.0f,0.0f};
@@ -468,20 +500,69 @@ void initOpengl(void)
 	glEnable(GL_TEXTURE_2D);
 	//marble_texture = loadBMP("marble.bmp");
 	glBindTexture(GL_TEXTURE_2D, 0);
+	//for snaketexture
+	glBindTexture(GL_TEXTURE_2D, 1);
 	//
 	//load the image file into a ppm structure.
 	//
 	//g.marbleImage = ppm6GetImage("./images/marble.ppm");
-	g.marbleImage = &img[0];
+	g.snakecimage = &img[0];
+	g.background = &img[1];
+	g.background2 = &img[2];
+	g.background3 = &img[3];
+	g.background4 = &img[4];
+	g.background5 = &img[5];
+	
 	//
 	//create opengl texture elements
-	glGenTextures(1, &g.marbleTexture);
-	glBindTexture(GL_TEXTURE_2D, g.marbleTexture);
+	//Marble Background
+	glGenTextures(1, &g.BackgroundTexture);
+	glBindTexture(GL_TEXTURE_2D, g.BackgroundTexture);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, 3,
-	             g.marbleImage->width, g.marbleImage->height,
-	             0, GL_RGB, GL_UNSIGNED_BYTE, g.marbleImage->data);
+	             g.background->width, g.background->height,
+	             0, GL_RGB, GL_UNSIGNED_BYTE, g.background->data);
+	//Sand pattern background
+	glGenTextures(1, &g.BackgroundTexture2);
+	glBindTexture(GL_TEXTURE_2D, g.BackgroundTexture2);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3,
+	             g.background2->width, g.background2->height,
+	             0, GL_RGB, GL_UNSIGNED_BYTE, g.background2->data);
+	//Roof background
+	glGenTextures(1, &g.BackgroundTexture3);
+	glBindTexture(GL_TEXTURE_2D, g.BackgroundTexture3);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3,
+	             g.background3->width, g.background3->height,
+	             0, GL_RGB, GL_UNSIGNED_BYTE, g.background3->data);
+	//Exotic plants background
+	glGenTextures(1, &g.BackgroundTexture4);
+	glBindTexture(GL_TEXTURE_2D, g.BackgroundTexture4);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3,
+	             g.background4->width, g.background4->height,
+	             0, GL_RGB, GL_UNSIGNED_BYTE, g.background4->data);
+	//Horizontal stream background
+	glGenTextures(1, &g.BackgroundTexture5);
+	glBindTexture(GL_TEXTURE_2D, g.BackgroundTexture5);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3,
+	             g.background5->width, g.background5->height,
+	             0, GL_RGB, GL_UNSIGNED_BYTE, g.background5->data);
+	//For Credits screen
+	glGenTextures(1, &g.snakectexture);
+	glBindTexture(GL_TEXTURE_2D, g.snakectexture);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3,
+	             g.snakecimage->width, g.snakecimage->height,
+	             0, GL_RGB, GL_UNSIGNED_BYTE, g.snakecimage->data);
 }
 
 void initSnake()
@@ -569,6 +650,7 @@ void resetGame()
 	initRat();
 	g.gameover  = 0;
 	g.winner    = 0;
+	g.reset = 1;
 }
 
 //================================
@@ -614,6 +696,9 @@ int checkKeys(XEvent *e)
 		case XK_r:
 			resetGame();
 			break;
+		case XK_Escape:
+			exit(0);
+			break;
 		case XK_y:
 			show_my_name();
 			break;
@@ -634,7 +719,10 @@ int checkKeys(XEvent *e)
 
 		case XK_s:
 			g.startup = check_startup(g.startup);
-			break;			
+			break;
+		case XK_k:
+			g.mapsize = check_map(g.mapsize);
+			break;
 		case XK_d:
 			greeting();
 			break;
@@ -644,11 +732,17 @@ int checkKeys(XEvent *e)
 		case XK_c:
 			g.credits = set_credits_state(g.credits);
 			break;
+		case XK_m:
+			g.timestat = g.timestat ^ 1;
+			break;
+		case XK_b:
+			g.setbackground = changebackground(g.setbackground);
+			break;
 		case XK_j:
 			Money();
 			break;
 		case XK_p:
-			pauseGame(g.p);
+			g.pause = pauseGame(g.pause);
 			break;
 		case XK_equal:
 			g.snake.delay *= 0.9;
@@ -718,7 +812,9 @@ int checkMouse(XEvent *e)
 							break;
 						case 1:
 							printf("Quit was clicked!\n");
-							return 1;
+							//temporary fix for the quit button
+							exit(0);
+							break;
 					}
 				}
 			}
@@ -752,6 +848,9 @@ void getGridCenter(const int i, const int j, int cent[2])
 
 void physics(void)
 {
+	while(g.pause){
+		return;
+	}
 	int i;
 	if (g.gameover)
 	{
@@ -884,9 +983,18 @@ void render(void)
 	//this sets to 2D mode (no perspective)
 	glOrtho(0, g.xres, 0, g.yres, -1, 1);
 	//
-	//screen background
+
+	//screen background-------------------------------------
+	display_background(g.BackgroundTexture,
+					   g.BackgroundTexture2,
+					   g.BackgroundTexture3,
+					   g.BackgroundTexture4,
+					   g.BackgroundTexture5, g.xres, g.yres, g.setbackground);
+
+	/* //old background render code
 	glColor3f(0.5f, 0.5f, 0.5f);
-	glBindTexture(GL_TEXTURE_2D, g.marbleTexture);
+	glBindTexture(GL_TEXTURE_2D, g.BackgroundTexture);
+	//glBindTexture(GL_TEXTURE_2D, setBackgroundTexture());
 	glBegin(GL_QUADS);
 		glTexCoord2f(0.0f, 0.0f); glVertex2i(0,      0);
 		glTexCoord2f(0.0f, 1.0f); glVertex2i(0,      g.yres);
@@ -894,13 +1002,7 @@ void render(void)
 		glTexCoord2f(1.0f, 0.0f); glVertex2i(g.xres, 0);
 	glEnd();
 	glBindTexture(GL_TEXTURE_2D, 0);
-	//draw you lost box 
-//	if (g.gameover)
-//	{
-//
-//	}
-	//
-	//draw all buttons
+	*/
 	for (i=0; i<g.nbuttons; i++) {
 		if (g.button[i].over) {
 			int w=2;
@@ -1020,6 +1122,7 @@ void render(void)
 	r.left   = g.xres/2;
 	r.bot    = g.yres-100;
 	r.center = 1;
+
 	//Changed to better fit out game
 	ggprint16(&r, 16, 0x00ffffff, "Venom");
 
@@ -1047,6 +1150,10 @@ void render(void)
 		//startup screen will automatically be toggled
 		show_startup(g.xres,g.yres);
 	}
+	if (g.mapsize) {
+		//render the map resize
+		resize_map(g.xres, g.yres, g.boardDim, g.gridDim);
+	}
 	//jayden's you lost screen
 	if (g.gameover){
 	    //show you lost
@@ -1054,13 +1161,23 @@ void render(void)
 	}
 	//Jorge's credits screen
 	if (g.credits) {
-		//toggle credits - apart from menu for now
-		show_credits_screen(g.xres, g.yres);
+		//toggle credits - seperate from a menu option for now
+		show_credits_screen(g.xres, g.yres, g.snakectexture);
 	}
-
+	//Jorge's Timer feature: don't want to show it if any other screen is on
+	if ((g.timestat == 1) &&
+		(g.gameover != 1) && 
+		(g.credits != 1 ) && 
+		(g.startup != 1 )) {
+        timer(g.xres, g.yres);
+    }
+	//Pause screen
+	if ((g.pause == 1)    &&
+        (g.gameover != 1) &&
+        (g.credits != 1)  && 
+        (g.startup != 1)) {
+	   	show_pauseScreen(g.xres, g.yres);
+    }
 
 }
-
-
-
 
