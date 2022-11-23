@@ -72,6 +72,7 @@ void show_startup(int x, int y)
     r.bot = ycent + 100;
     r.center = 50;
     ggprint16(&r, 150, 0xffffffff, "VENOM");
+    ggprint16(&r, 250, 0xffffffff, "Press S to Start");
     //glDisable(GL_BLEND);
 }
 
