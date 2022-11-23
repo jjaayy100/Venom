@@ -16,7 +16,7 @@ struct Dlobal
     int length;
     int direction;
     int snake_pos[MAX_GRID * MAX_GRID][2];
-    int rat_pos = [2];
+    int rat_pos[2];
 } d;
 
 struct background{
