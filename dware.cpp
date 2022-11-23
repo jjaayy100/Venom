@@ -7,7 +7,17 @@
 #include "fonts.h"
 #include "jambriz.h"
 
+#define MAX_GRID 80
+
 using namespace std;
+
+struct Dlobal
+{
+    int length;
+    int direction;
+    int snake_pos[MAX_GRID * MAX_GRID][2];
+    int rat_pos = [2];
+} d;
 
 struct background{
     GLuint BackgroundTexture;
@@ -16,12 +26,18 @@ struct background{
     GLuint BackgroundTexture4;
     GLuint BackgroundTexture5;
 
-} d;
+} b;
+
+void get_snake_pos(int length, int snake_pos[][])
+{
+    d.snake_pos[0][0] = snake_pos[0][0];
+    d.snake_pos[0][1] = snake_pos[0][1];
+}
 
 
 void dget_textures(GLuint BackgroundTexture)
 {
-    d.BackgroundTexture = BackgroundTexture;
+    b.BackgroundTexture = BackgroundTexture;
 }
 int greeting()
 {
