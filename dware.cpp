@@ -112,7 +112,7 @@ void resize_map(int x, int y, int boarddim, int griddim)
     //  
     //screen background
     glColor3f(0.5f, 0.5f, 0.5f);
-    glBindTexture(GL_TEXTURE_2D, 0); //g.marbleTexture);
+    glBindTexture(GL_TEXTURE_2D, d.BackgroundTexture);
     glBegin(GL_QUADS);
         glTexCoord2f(0.0f, 0.0f); glVertex2i(0,      0); 
         glTexCoord2f(0.0f, 1.0f); glVertex2i(0,      y); 
