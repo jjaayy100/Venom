@@ -848,6 +848,9 @@ void getGridCenter(const int i, const int j, int cent[2])
 
 void physics(void)
 {
+	while(g.startup){
+		return;
+	}
 	while(g.pause){
 		return;
 	}
