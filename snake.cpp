@@ -158,8 +158,12 @@ public:
 			unlink(ppmname);
 	}
 };
-Image img[2] = {"./images/marble.gif",
-				 "./images/snake1.jpg"};
+Image img[6] = {"./images/snake1.jpg",
+				"./images/marble.gif",
+				"./images/pattern_sand.jpg",
+				"./images/roof_distance.jpg",
+				"./images/exotic_plants_side.jpg",
+				"./images/stream_horizontal.jpg"};
 
 
 struct Global {
@@ -172,6 +176,7 @@ struct Global {
 	int gameover;
 	int winner;
 	int gamestart;
+	unsigned int setbackground;
 	unsigned int pause;
 	unsigned int help;
 	float changeSnakeColor;
@@ -180,9 +185,17 @@ struct Global {
 	unsigned int credits;
 	unsigned int timestat;
 	unsigned int reset;
-	Image *marbleImage;
+	Image *background;
+	Image *background2;
+	Image *background3;
+	Image *background4;
+	Image *background5;
 	Image *snakecimage;
-	GLuint marbleTexture;
+	GLuint BackgroundTexture;
+	GLuint BackgroundTexture2;
+	GLuint BackgroundTexture3;
+	GLuint BackgroundTexture4;
+	GLuint BackgroundTexture5;
 	GLuint snakectexture;
 	Button button[MAXBUTTONS];
 	int nbuttons;
@@ -198,8 +211,13 @@ struct Global {
 		credits = 0;
 		nbuttons = 0;
 		reset = 0;
-		marbleImage=NULL;
+		background=NULL;
+		background2=NULL;
+		background3=NULL;
+		background4=NULL;
+		background5=NULL;
 		snakecimage=NULL;
+		setbackground = 1;
 		pause = 0;
 		help = 0;
 		changeSnakeColor = 0.0;
@@ -397,7 +415,7 @@ void initSound()
 	}
 	//Clear error state.
 	alGetError();
-	//
+	//g.background3 = &img[3];
 	//Setup the listener.
 	//Forward and up vectors are used.
 	float vec[6] = {0.0f,0.0f,1.0f, 0.0f,1.0f,0.0f};
@@ -488,17 +506,55 @@ void initOpengl(void)
 	//load the image file into a ppm structure.
 	//
 	//g.marbleImage = ppm6GetImage("./images/marble.ppm");
-	g.marbleImage = &img[0];
-	g.snakecimage = &img[1];
+	g.snakecimage = &img[0];
+	g.background = &img[1];
+	g.background2 = &img[2];
+	g.background3 = &img[3];
+	g.background4 = &img[4];
+	g.background5 = &img[5];
+	
 	//
 	//create opengl texture elements
-	glGenTextures(1, &g.marbleTexture);
-	glBindTexture(GL_TEXTURE_2D, g.marbleTexture);
+	//Marble Background
+	glGenTextures(1, &g.BackgroundTexture);
+	glBindTexture(GL_TEXTURE_2D, g.BackgroundTexture);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, 3,
-	             g.marbleImage->width, g.marbleImage->height,
-	             0, GL_RGB, GL_UNSIGNED_BYTE, g.marbleImage->data);
+	             g.background->width, g.background->height,
+	             0, GL_RGB, GL_UNSIGNED_BYTE, g.background->data);
+	//Sand pattern background
+	glGenTextures(1, &g.BackgroundTexture2);
+	glBindTexture(GL_TEXTURE_2D, g.BackgroundTexture2);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3,
+	             g.background2->width, g.background2->height,
+	             0, GL_RGB, GL_UNSIGNED_BYTE, g.background2->data);
+	//Roof background
+	glGenTextures(1, &g.BackgroundTexture3);
+	glBindTexture(GL_TEXTURE_2D, g.BackgroundTexture3);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3,
+	             g.background3->width, g.background3->height,
+	             0, GL_RGB, GL_UNSIGNED_BYTE, g.background3->data);
+	//Exotic plants background
+	glGenTextures(1, &g.BackgroundTexture4);
+	glBindTexture(GL_TEXTURE_2D, g.BackgroundTexture4);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3,
+	             g.background4->width, g.background4->height,
+	             0, GL_RGB, GL_UNSIGNED_BYTE, g.background4->data);
+	//Horizontal stream background
+	glGenTextures(1, &g.BackgroundTexture5);
+	glBindTexture(GL_TEXTURE_2D, g.BackgroundTexture5);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3,
+	             g.background5->width, g.background5->height,
+	             0, GL_RGB, GL_UNSIGNED_BYTE, g.background5->data);
 	//For Credits screen
 	glGenTextures(1, &g.snakectexture);
 	glBindTexture(GL_TEXTURE_2D, g.snakectexture);
@@ -678,6 +734,9 @@ int checkKeys(XEvent *e)
 			break;
 		case XK_m:
 			g.timestat = g.timestat ^ 1;
+			break;
+		case XK_b:
+			g.setbackground = changebackground(g.setbackground);
 			break;
 		case XK_j:
 			Money();
@@ -924,9 +983,18 @@ void render(void)
 	//this sets to 2D mode (no perspective)
 	glOrtho(0, g.xres, 0, g.yres, -1, 1);
 	//
-	//screen background
+
+	//screen background-------------------------------------
+	display_background(g.BackgroundTexture,
+					   g.BackgroundTexture2,
+					   g.BackgroundTexture3,
+					   g.BackgroundTexture4,
+					   g.BackgroundTexture5, g.xres, g.yres, g.setbackground);
+
+	/* //old background render code
 	glColor3f(0.5f, 0.5f, 0.5f);
-	glBindTexture(GL_TEXTURE_2D, g.marbleTexture);
+	glBindTexture(GL_TEXTURE_2D, g.BackgroundTexture);
+	//glBindTexture(GL_TEXTURE_2D, setBackgroundTexture());
 	glBegin(GL_QUADS);
 		glTexCoord2f(0.0f, 0.0f); glVertex2i(0,      0);
 		glTexCoord2f(0.0f, 1.0f); glVertex2i(0,      g.yres);
@@ -934,13 +1002,7 @@ void render(void)
 		glTexCoord2f(1.0f, 0.0f); glVertex2i(g.xres, 0);
 	glEnd();
 	glBindTexture(GL_TEXTURE_2D, 0);
-	//draw you lost box 
-//	if (g.gameover)
-//	{
-//
-//	}
-	//
-	//draw all buttons
+	*/
 	for (i=0; i<g.nbuttons; i++) {
 		if (g.button[i].over) {
 			int w=2;

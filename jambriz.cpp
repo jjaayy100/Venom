@@ -21,9 +21,11 @@ struct Jlobal {
     int min;
     int tmp;
     int pause;
+    int whatbackground;
     Jlobal(){
         gamestart = time(NULL);
         timerstart = time(NULL);
+        whatbackground = 1;
     }
 } j;
 
@@ -99,10 +101,82 @@ unsigned int set_credits_state(unsigned int credits)
     return credits;
 }
 
+int changebackground(int background)
+{
+    int newbackground = background + 1;
+    if (newbackground > 5)
+    {
+        newbackground = 1;
+    }
+    //cout << newbackground << endl; //for testing purposes
+    return newbackground;
+}
+
 unsigned int pauseGame(unsigned int p)
 {
     p = p ^ 1;
     return p;
+}
+
+void display_background(GLuint BackgroundTexture, GLuint BackgroundTexture2, GLuint BackgroundTexture3, GLuint BackgroundTexture4, GLuint BackgroundTexture5, int xres, int yres, int background_num)
+{
+    if (background_num == 1) {
+    glColor3f(0.5f, 0.5f, 0.5f);
+	glBindTexture(GL_TEXTURE_2D, BackgroundTexture);
+	//glBindTexture(GL_TEXTURE_2D, setBackgroundTexture());
+	glBegin(GL_QUADS);
+		glTexCoord2f(0.0f, 0.0f); glVertex2i(0,      0);
+		glTexCoord2f(0.0f, 1.0f); glVertex2i(0,      yres);
+		glTexCoord2f(1.0f, 1.0f); glVertex2i(xres, yres);
+		glTexCoord2f(1.0f, 0.0f); glVertex2i(xres, 0);
+	glEnd();
+	glBindTexture(GL_TEXTURE_2D, 0);
+    }
+    else if (background_num == 2){
+        glColor3f(0.5f, 0.5f, 0.5f);
+	glBindTexture(GL_TEXTURE_2D, BackgroundTexture2);
+	glBegin(GL_QUADS);
+		glTexCoord2f(0.0f, 0.0f); glVertex2i(0,      0);
+		glTexCoord2f(0.0f, 1.0f); glVertex2i(0,      yres);
+		glTexCoord2f(1.0f, 1.0f); glVertex2i(xres, yres);
+		glTexCoord2f(1.0f, 0.0f); glVertex2i(xres, 0);
+	glEnd();
+	glBindTexture(GL_TEXTURE_2D, 0);
+    }
+    else if(background_num == 3) {
+        glColor3f(0.5f, 0.5f, 0.5f);
+	glBindTexture(GL_TEXTURE_2D, BackgroundTexture3);
+	glBegin(GL_QUADS);
+		glTexCoord2f(0.0f, 0.0f); glVertex2i(0,      0);
+		glTexCoord2f(0.0f, 1.0f); glVertex2i(0,      yres);
+		glTexCoord2f(1.0f, 1.0f); glVertex2i(xres, yres);
+		glTexCoord2f(1.0f, 0.0f); glVertex2i(xres, 0);
+	glEnd();
+	glBindTexture(GL_TEXTURE_2D, 0);
+    }
+    else if(background_num == 4) {
+        glColor3f(0.5f, 0.5f, 0.5f);
+	glBindTexture(GL_TEXTURE_2D, BackgroundTexture4);
+	glBegin(GL_QUADS);
+		glTexCoord2f(0.0f, 0.0f); glVertex2i(0,      0);
+		glTexCoord2f(0.0f, 1.0f); glVertex2i(0,      yres);
+		glTexCoord2f(1.0f, 1.0f); glVertex2i(xres, yres);
+		glTexCoord2f(1.0f, 0.0f); glVertex2i(xres, 0);
+	glEnd();
+	glBindTexture(GL_TEXTURE_2D, 0);
+    }
+    else if(background_num == 5) {
+        glColor3f(0.5f, 0.5f, 0.5f);
+	glBindTexture(GL_TEXTURE_2D, BackgroundTexture5);
+	glBegin(GL_QUADS);
+		glTexCoord2f(0.0f, 0.0f); glVertex2i(0,      0);
+		glTexCoord2f(0.0f, 1.0f); glVertex2i(0,      yres);
+		glTexCoord2f(1.0f, 1.0f); glVertex2i(xres, yres);
+		glTexCoord2f(1.0f, 0.0f); glVertex2i(xres, 0);
+	glEnd();
+	glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
 }
 
 void show_credits_screen(int xres, int yres, GLuint snakectexture)
