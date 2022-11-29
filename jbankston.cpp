@@ -17,11 +17,17 @@
 
 using namespace std;
 
+typedef struct t_hawk{
+        int status;
+        int pos[2];
+} Hawk;
+
 int Money()
 {
     cout << "Jay Money!" << endl;
     return 0;
 }
+
 void youlost(int lost)
 {
     if (lost <= 0)
@@ -32,6 +38,7 @@ void youlost(int lost)
 
    
 }
+
 void showyoulost(int xres, int yres)
 {
     Rect r; 
@@ -50,4 +57,27 @@ void showyoulost(int xres, int yres)
     r.bot = ycent + 80;
     r.center = 50;
     ggprint16(&r, 50, 0xffffffff, "YOU LOST");
+    ggprint16(&r, 50, 0xffffffff, "Press 'R' To Restart");
 }
+
+void initHawk(Hawk *h)
+{
+    h->status = 1; 
+    h->pos[0] = 25; 
+    h->pos[1] = 2; 
+}
+
+//int hawkphysics(int *head[], Hawk *h)
+//{
+//   if (*head[0] == h->pos[0] && *head[1] == h->pos[1]){
+//	return 1;
+//    }
+//    return 0;
+//}
+
+void cratehawks()
+{
+
+}
+
+
