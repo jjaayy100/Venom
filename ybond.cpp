@@ -24,9 +24,14 @@ int show_my_name()
 float change_snake_color()
 {
     srand (static_cast <unsigned> (time(NULL)));
-    cout << "Press z to change the snake color.\n" << endl;
+    cout << "Press k to change the snake color.\n" << endl;
 
+    //From:  https://www.demo2s.com/cpp/cpp-float-c-static-cast-float-loops-floor-loops.html
+    //The below line 
     float change = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+
+    // cout << change << "\n" <<  endl;
+
     return change;
 
 
