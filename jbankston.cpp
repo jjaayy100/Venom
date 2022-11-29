@@ -14,13 +14,14 @@
 #include <GL/glx.h>
 #include "log.h"
 #include "fonts.h"
+#include "jbankston.h"
 
 using namespace std;
 
-typedef struct t_hawk{
-        int status;
-        int pos[2];
-} Hawk;
+//typedef struct t_hawk{
+//        int status;
+//        int pos[2];
+//} Hawk;
 
 int Money()
 {
@@ -75,9 +76,20 @@ void initHawk(Hawk *h)
 //    return 0;
 //}
 
-void cratehawks()
+void cratehawks(int xres, int yres, Hawk *h, int cent[])
 {
+    getGridCenter(h->pos[1],h->pos[0],cent);
+        glColor3f(0.1, 0.1f, 0.0f);
+        glBegin(GL_QUADS);
+        glVertex2i(cent[0]-4, cent[1]-3);
+        glVertex2i(cent[0]-4, cent[1]+4);
+        glVertex2i(cent[0]+3, cent[1]+4);
+        glVertex2i(cent[0]+3, cent[1]-3);
+        glEnd();
 
+	//r.left   = g.xres/2;
+        //r.bot    = g.yres-100;
+        //r.center = 1;
 }
 
 
