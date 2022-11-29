@@ -167,6 +167,28 @@ Image img[6] = {"./images/snake1.jpg",
 				"./images/exotic_plants_side.jpg",
 				"./images/stream_horizontal.jpg"};
 
+struct Textures {
+	Image *background;
+	Image *background2;
+	Image *background3;
+	Image *background4;
+	Image *background5;
+	Image *snakecimage;
+	GLuint BackgroundTexture;
+	GLuint BackgroundTexture2;
+	GLuint BackgroundTexture3;
+	GLuint BackgroundTexture4;
+	GLuint BackgroundTexture5;
+	GLuint snakectexture;
+	Textures() {
+		background=NULL;
+		background2=NULL;
+		background3=NULL;
+		background4=NULL;
+		background5=NULL;
+		snakecimage=NULL;
+	}
+}t;
 
 struct Global {
 	int xres, yres;
@@ -188,18 +210,6 @@ struct Global {
 	unsigned int credits;
 	unsigned int timestat;
 	unsigned int reset;
-	Image *background;
-	Image *background2;
-	Image *background3;
-	Image *background4;
-	Image *background5;
-	Image *snakecimage;
-	GLuint BackgroundTexture;
-	GLuint BackgroundTexture2;
-	GLuint BackgroundTexture3;
-	GLuint BackgroundTexture4;
-	GLuint BackgroundTexture5;
-	GLuint snakectexture;
 	Button button[MAXBUTTONS];
 	int nbuttons;
 	//
@@ -214,12 +224,6 @@ struct Global {
 		credits = 0;
 		nbuttons = 0;
 		reset = 0;
-		background=NULL;
-		background2=NULL;
-		background3=NULL;
-		background4=NULL;
-		background5=NULL;
-		snakecimage=NULL;
 		setbackground = 1;
 		pause = 0;
 		help = 0;
@@ -510,63 +514,64 @@ void initOpengl(void)
 	//load the image file into a ppm structure.
 	//
 	//g.marbleImage = ppm6GetImage("./images/marble.ppm");
-	g.snakecimage = &img[0];
-	g.background = &img[1];
-	g.background2 = &img[2];
-	g.background3 = &img[3];
-	g.background4 = &img[4];
-	g.background5 = &img[5];
+	t.snakecimage = &img[0];
+	t.background = &img[1];
+	t.background2 = &img[2];
+	t.background3 = &img[3];
+	t.background4 = &img[4];
+	t.background5 = &img[5];
 	
 	//
 	//create opengl texture elements
 	//Marble Background
-	glGenTextures(1, &g.BackgroundTexture);
-	glBindTexture(GL_TEXTURE_2D, g.BackgroundTexture);
+	glGenTextures(1, &t.BackgroundTexture);
+	glBindTexture(GL_TEXTURE_2D, t.BackgroundTexture);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, 3,
-	             g.background->width, g.background->height,
-	             0, GL_RGB, GL_UNSIGNED_BYTE, g.background->data);
+	             t.background->width, t.background->height,
+	             0, GL_RGB, GL_UNSIGNED_BYTE, t.background->data);
 	//Sand pattern background
-	glGenTextures(1, &g.BackgroundTexture2);
-	glBindTexture(GL_TEXTURE_2D, g.BackgroundTexture2);
+	glGenTextures(1, &t.BackgroundTexture2);
+	glBindTexture(GL_TEXTURE_2D, t.BackgroundTexture2);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, 3,
-	             g.background2->width, g.background2->height,
-	             0, GL_RGB, GL_UNSIGNED_BYTE, g.background2->data);
+	             t.background2->width, t.background2->height,
+	             0, GL_RGB, GL_UNSIGNED_BYTE, t.background2->data);
 	//Roof background
-	glGenTextures(1, &g.BackgroundTexture3);
-	glBindTexture(GL_TEXTURE_2D, g.BackgroundTexture3);
+	glGenTextures(1, &t.BackgroundTexture3);
+	glBindTexture(GL_TEXTURE_2D, t.BackgroundTexture3);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, 3,
-	             g.background3->width, g.background3->height,
-	             0, GL_RGB, GL_UNSIGNED_BYTE, g.background3->data);
+	             t.background3->width, t.background3->height,
+	             0, GL_RGB, GL_UNSIGNED_BYTE, t.background3->data);
 	//Exotic plants background
-	glGenTextures(1, &g.BackgroundTexture4);
-	glBindTexture(GL_TEXTURE_2D, g.BackgroundTexture4);
+	glGenTextures(1, &t.BackgroundTexture4);
+	glBindTexture(GL_TEXTURE_2D, t.BackgroundTexture4);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, 3,
-	             g.background4->width, g.background4->height,
-	             0, GL_RGB, GL_UNSIGNED_BYTE, g.background4->data);
+	             t.background4->width, t.background4->height,
+	             0, GL_RGB, GL_UNSIGNED_BYTE, t.background4->data);
 	//Horizontal stream background
-	glGenTextures(1, &g.BackgroundTexture5);
-	glBindTexture(GL_TEXTURE_2D, g.BackgroundTexture5);
+	glGenTextures(1, &t.BackgroundTexture5);
+	glBindTexture(GL_TEXTURE_2D, t.BackgroundTexture5);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, 3,
-	             g.background5->width, g.background5->height,
-	             0, GL_RGB, GL_UNSIGNED_BYTE, g.background5->data);
+	             t.background5->width, t.background5->height,
+	             0, GL_RGB, GL_UNSIGNED_BYTE, t.background5->data);
 	//For Credits screen
-	glGenTextures(1, &g.snakectexture);
-	glBindTexture(GL_TEXTURE_2D, g.snakectexture);
+	glGenTextures(1, &t.snakectexture);
+	glBindTexture(GL_TEXTURE_2D, t.snakectexture);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, 3,
-	             g.snakecimage->width, g.snakecimage->height,
-	             0, GL_RGB, GL_UNSIGNED_BYTE, g.snakecimage->data);
+	             t.snakecimage->width, t.snakecimage->height,
+	             0, GL_RGB, GL_UNSIGNED_BYTE, t.snakecimage->data);
+	get_textures(t.BackgroundTexture, t.BackgroundTexture2, t.BackgroundTexture3, t.BackgroundTexture4, t.BackgroundTexture5);
 }
 
 void initSnake()
@@ -706,6 +711,7 @@ int checkKeys(XEvent *e)
 			resetGame();
 			break;
 		case XK_Escape:
+			cleanupSound();
 			exit(0);
 			break;
 		case XK_y:
@@ -717,8 +723,7 @@ int checkKeys(XEvent *e)
 			// help screen state varialbe 
 			g.help = help_screen(g.help);
 			break;
-
-			case XK_z:
+			case XK_k:
                 // To change the color of the snake
                         g.changeSnakeColor = change_snake_color();
                         //if (g.changeSnakeColor == 1) {
@@ -729,14 +734,22 @@ int checkKeys(XEvent *e)
 		case XK_s:
 			g.startup = check_startup(g.startup);
 			break;
-		case XK_k:
+		case XK_z:
 			g.mapsize = check_map(g.mapsize);
 			break;
 		case XK_d:
 			greeting();
 			break;
 		case XK_a:
-			jhello();
+			break;
+		case XK_c:
+			g.credits = set_credits_state(g.credits);
+			break;
+		case XK_t:
+			g.timestat = g.timestat ^ 1;
+			break;
+		case XK_b:
+			g.setbackground = changebackground(g.setbackground);
 			break;
 		case XK_c:
 			g.credits = set_credits_state(g.credits);
@@ -821,7 +834,7 @@ int checkMouse(XEvent *e)
 							break;
 						case 1:
 							printf("Quit was clicked!\n");
-							//temporary fix for the quit button
+							cleanupSound();
 							exit(0);
 							break;
 					}
@@ -1002,11 +1015,7 @@ void render(void)
 	//
 
 	//screen background-------------------------------------
-	display_background(g.BackgroundTexture,
-					   g.BackgroundTexture2,
-					   g.BackgroundTexture3,
-					   g.BackgroundTexture4,
-					   g.BackgroundTexture5, g.xres, g.yres, g.setbackground);
+	display_background(g.xres, g.yres, g.setbackground);
 
 	/* //old background render code
 	glColor3f(0.5f, 0.5f, 0.5f);
@@ -1179,7 +1188,7 @@ void render(void)
 	//Jorge's credits screen
 	if (g.credits) {
 		//toggle credits - seperate from a menu option for now
-		show_credits_screen(g.xres, g.yres, g.snakectexture);
+		show_credits_screen(g.xres, g.yres, t.snakectexture);
 	}
 	//Jorge's Timer feature: don't want to show it if any other screen is on
 	if ((g.timestat == 1) &&
