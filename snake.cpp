@@ -723,7 +723,7 @@ int checkKeys(XEvent *e)
 			// help screen state varialbe 
 			g.help = help_screen(g.help);
 			break;
-			case XK_k:
+		case XK_k:
                 // To change the color of the snake
                         g.changeSnakeColor = change_snake_color();
                         //if (g.changeSnakeColor == 1) {
@@ -1094,8 +1094,10 @@ void render(void)
 	//draw snake...
 	#ifdef COLORFUL_SNAKE
 	//float c[3]={1.0f,1.0,0.5};
-	float val = g.changeSnakeColor;
-	float c[3] = {val, val, val};
+	float val_1 = g.changeSnakeColor;
+	float val_2 = change_snake_color();
+	float val_3 = change_snake_color();
+	float c[3] = {val_1, 1 - val_2, val_3 - val_1};
 	float rgb[3];
 	rgb[0] = -0.9 / (float)g.snake.length;
 	rgb[2] = -0.45 / (float)g.snake.length;
@@ -1161,8 +1163,9 @@ void render(void)
             //green += g.changeSnakeColor;
             //blue -= g.changeSnakeColor;
 
-            val = change_snake_color();
-
+            val_1 = change_snake_color();
+            val_2 = change_snake_color();
+            val_3 = change_snake_color();
         }
 
 	//Darien's Startup Screen
