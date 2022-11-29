@@ -715,7 +715,7 @@ int checkKeys(XEvent *e)
 			g.help = help_screen(g.help);
 			break;
 
-			case XK_z:
+			case XK_k:
                 // To change the color of the snake
                         g.changeSnakeColor = change_snake_color();
                         //if (g.changeSnakeColor == 1) {
@@ -726,19 +726,18 @@ int checkKeys(XEvent *e)
 		case XK_s:
 			g.startup = check_startup(g.startup);
 			break;
-		case XK_k:
+		case XK_z:
 			g.mapsize = check_map(g.mapsize);
 			break;
 		case XK_d:
 			greeting();
 			break;
 		case XK_a:
-			jhello();
 			break;
 		case XK_c:
 			g.credits = set_credits_state(g.credits);
 			break;
-		case XK_m:
+		case XK_t:
 			g.timestat = g.timestat ^ 1;
 			break;
 		case XK_b:
