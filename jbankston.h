@@ -2,4 +2,6 @@
 //
 extern int youlost(int lost);
 extern int showyoulost(int xres, int yres);
-extern int background();
+extern int cratehawk();
+extern int initHawk();
+extern int hawkphysics(int head[]);
