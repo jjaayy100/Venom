@@ -751,14 +751,8 @@ int checkKeys(XEvent *e)
 		case XK_b:
 			g.setbackground = changebackground(g.setbackground);
 			break;
-		case XK_c:
-			g.credits = set_credits_state(g.credits);
-			break;
 		case XK_m:
 			g.timestat = g.timestat ^ 1;
-			break;
-		case XK_b:
-			g.setbackground = changebackground(g.setbackground);
 			break;
 		case XK_j:
 			Money();
