@@ -5,8 +5,42 @@
 #include <GL/glx.h>
 #include "log.h"
 #include "fonts.h"
+#include "jambriz.h"
 
+#define MAX_GRID 80
 using namespace std;
+
+struct Dlobal
+{
+    int length;
+    int direction;
+    int snake_pos[MAX_GRID * MAX_GRID][2];
+    int rat_pos[2];
+} d;
+
+
+struct Background
+{
+    GLuint BackgroundTexture;
+    GLuint BackgroundTexture2;
+    GLuint BackgroundTexture3;
+    GLuint BackgroundTexture4;
+    GLuint BackgroundTexture5;
+
+} b;
+
+void dget_textures(GLuint BackgroundTexture)
+{
+
+    b.BackgroundTexture = BackgroundTexture;
+}
+
+void get_snake_pos(int length, int snake_pos[][2])
+{
+    d.snake_pos[0][0] = snake_pos[0][0];
+    d.snake_pos[0][1] = snake_pos[0][1];
+    d.length = length;
+}
 
 int greeting()
 {
@@ -41,6 +75,7 @@ void show_startup(int x, int y)
     r.bot = ycent + 100;
     r.center = 50;
     ggprint16(&r, 150, 0xffffffff, "VENOM");
+    ggprint16(&r, 250, 0xffffffff, "Press S to Start");
     //glDisable(GL_BLEND);
 }
 
@@ -56,8 +91,8 @@ unsigned int check_map(unsigned int k)
 //resizing should be done in render. The check keys function should just go to the call in render
 void resize_map(int x, int y, int boarddim, int griddim)
 {
-    int brs = boarddim + 10;
-    int grs = griddim + 10;
+    int brs = boarddim / 20;
+    int grs = griddim / 2;
     //x = g.xres
     //y = g.yres
 //    Rect r;
@@ -106,7 +141,7 @@ void resize_map(int x, int y, int boarddim, int griddim)
     glColor3f(0.3f, 0.3f, 0.2f);
     glBegin(GL_LINES);
     for (int i=1; i<brs; i++) {
-        y0 += 25; 
+        y0 += 20; 
         glVertex2i(x0,y0);
         glVertex2i(x1,y0);
     }
@@ -114,9 +149,10 @@ void resize_map(int x, int y, int boarddim, int griddim)
     y0 = s1-b2;
     y1 = s1+b2;
     for (int j=1; j<grs; j++) {
-        x0 += 25;
+        x0 += 20;
         glVertex2i(x0,y0);
         glVertex2i(x0,y1);
     }
     glEnd();
 }
+//new_board_dimensions()

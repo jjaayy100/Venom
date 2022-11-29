@@ -22,12 +22,29 @@ struct Jlobal {
     int tmp;
     int pause;
     int whatbackground;
+    GLuint BackGroundTexture;
+	GLuint BackGroundTexture2;
+	GLuint BackGroundTexture3;
+	GLuint BackGroundTexture4;
+	GLuint BackGroundTexture5;
+	GLuint snakectexture;
     Jlobal(){
         gamestart = time(NULL);
         timerstart = time(NULL);
         whatbackground = 1;
     }
 } j;
+
+void get_textures(GLuint BackgroundTexture, GLuint BackgroundTexture2, GLuint BackgroundTexture3, GLuint BackgroundTexture4, GLuint BackgroundTexture5)
+{
+    j.BackGroundTexture = BackgroundTexture;
+    j.BackGroundTexture2 = BackgroundTexture2;
+    j.BackGroundTexture3 = BackgroundTexture3;
+    j.BackGroundTexture4 = BackgroundTexture4;
+    j.BackGroundTexture5 = BackgroundTexture5;
+
+}
+
 
 //This function will update values from the Global struct in snake.cpp
 //to Jlobal in this source file to increase functionality. This could be improved.
@@ -118,11 +135,11 @@ unsigned int pauseGame(unsigned int p)
     return p;
 }
 
-void display_background(GLuint BackgroundTexture, GLuint BackgroundTexture2, GLuint BackgroundTexture3, GLuint BackgroundTexture4, GLuint BackgroundTexture5, int xres, int yres, int background_num)
+void display_background(int xres, int yres, int background_num)
 {
     if (background_num == 1) {
     glColor3f(0.5f, 0.5f, 0.5f);
-	glBindTexture(GL_TEXTURE_2D, BackgroundTexture);
+	glBindTexture(GL_TEXTURE_2D, j.BackGroundTexture);
 	//glBindTexture(GL_TEXTURE_2D, setBackgroundTexture());
 	glBegin(GL_QUADS);
 		glTexCoord2f(0.0f, 0.0f); glVertex2i(0,      0);
@@ -134,7 +151,7 @@ void display_background(GLuint BackgroundTexture, GLuint BackgroundTexture2, GLu
     }
     else if (background_num == 2){
         glColor3f(0.5f, 0.5f, 0.5f);
-	glBindTexture(GL_TEXTURE_2D, BackgroundTexture2);
+	glBindTexture(GL_TEXTURE_2D, j.BackGroundTexture2);
 	glBegin(GL_QUADS);
 		glTexCoord2f(0.0f, 0.0f); glVertex2i(0,      0);
 		glTexCoord2f(0.0f, 1.0f); glVertex2i(0,      yres);
@@ -145,7 +162,7 @@ void display_background(GLuint BackgroundTexture, GLuint BackgroundTexture2, GLu
     }
     else if(background_num == 3) {
         glColor3f(0.5f, 0.5f, 0.5f);
-	glBindTexture(GL_TEXTURE_2D, BackgroundTexture3);
+	glBindTexture(GL_TEXTURE_2D, j.BackGroundTexture3);
 	glBegin(GL_QUADS);
 		glTexCoord2f(0.0f, 0.0f); glVertex2i(0,      0);
 		glTexCoord2f(0.0f, 1.0f); glVertex2i(0,      yres);
@@ -156,7 +173,7 @@ void display_background(GLuint BackgroundTexture, GLuint BackgroundTexture2, GLu
     }
     else if(background_num == 4) {
         glColor3f(0.5f, 0.5f, 0.5f);
-	glBindTexture(GL_TEXTURE_2D, BackgroundTexture4);
+	glBindTexture(GL_TEXTURE_2D, j.BackGroundTexture4);
 	glBegin(GL_QUADS);
 		glTexCoord2f(0.0f, 0.0f); glVertex2i(0,      0);
 		glTexCoord2f(0.0f, 1.0f); glVertex2i(0,      yres);
@@ -167,7 +184,7 @@ void display_background(GLuint BackgroundTexture, GLuint BackgroundTexture2, GLu
     }
     else if(background_num == 5) {
         glColor3f(0.5f, 0.5f, 0.5f);
-	glBindTexture(GL_TEXTURE_2D, BackgroundTexture5);
+	glBindTexture(GL_TEXTURE_2D, j.BackGroundTexture5);
 	glBegin(GL_QUADS);
 		glTexCoord2f(0.0f, 0.0f); glVertex2i(0,      0);
 		glTexCoord2f(0.0f, 1.0f); glVertex2i(0,      yres);
