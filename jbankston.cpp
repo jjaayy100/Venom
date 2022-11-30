@@ -18,6 +18,14 @@
 
 using namespace std;
 
+struct Glo {
+    int gridDim;
+    Glo(){
+	Hawk hawk;
+	gridDim = 40;
+    }
+}n;
+
 //typedef struct t_hawk{
 //        int status;
 //        int pos[2];
@@ -42,6 +50,7 @@ void youlost(int lost)
 
 void showyoulost(int xres, int yres)
 {
+
     Rect r; 
     int xcent = xres / 2; 
     int ycent = yres / 2;
@@ -68,18 +77,19 @@ void initHawk(Hawk *h)
     h->pos[1] = 2; 
 }
 
-//int hawkphysics(int *head[], Hawk *h)
-//{
-//   if (*head[0] == h->pos[0] && *head[1] == h->pos[1]){
-//	return 1;
-//    }
-//    return 0;
-//}
+int hawkphysics(int *head[], Hawk *h)
+{
+    while(1) {
+	h->pos[0] = rand() % n.gridDim;
+	h->pos[1] = rand() % n.gridDim;
+    }
+
+}
 
 void cratehawks(int xres, int yres, Hawk *h, int cent[])
 {
     getGridCenter(h->pos[1],h->pos[0],cent);
-        glColor3f(0.1, 0.1f, 0.0f);
+        glColor3f(0.82, 0.0f, 0.0f);
         glBegin(GL_QUADS);
         glVertex2i(cent[0]-4, cent[1]-3);
         glVertex2i(cent[0]-4, cent[1]+4);

@@ -53,7 +53,7 @@
 #include "fonts.h"
 #include "jambriz.h"
 #include "jbankston.h"
-#include "help.h"
+#include "ybond.h"
 #include "dware.h"
 
 
@@ -161,7 +161,7 @@ public:
 	}
 };
 Image img[6] = {"./images/snake1.jpg",
-				"./images/marble.gif",
+				"./images/grandmother_flower.jpg",
 				"./images/pattern_sand.jpg",
 				"./images/roof_distance.jpg",
 				"./images/exotic_plants_side.jpg",
@@ -625,9 +625,9 @@ void init()
 	strcpy(g.button[g.nbuttons].text, "Reset");
 	g.button[g.nbuttons].down = 0;
 	g.button[g.nbuttons].click = 0;
-	g.button[g.nbuttons].color[0] = 0.4f;
+	g.button[g.nbuttons].color[0] = 0.0f;
 	g.button[g.nbuttons].color[1] = 0.4f;
-	g.button[g.nbuttons].color[2] = 0.7f;
+	g.button[g.nbuttons].color[2] = 0.0f; //7
 	g.button[g.nbuttons].dcolor[0] = g.button[g.nbuttons].color[0] * 0.5f;
 	g.button[g.nbuttons].dcolor[1] = g.button[g.nbuttons].color[1] * 0.5f;
 	g.button[g.nbuttons].dcolor[2] = g.button[g.nbuttons].color[2] * 0.5f;
@@ -636,7 +636,7 @@ void init()
 	g.button[g.nbuttons].r.width = 140;
 	g.button[g.nbuttons].r.height = 60;
 	g.button[g.nbuttons].r.left = 20;
-	g.button[g.nbuttons].r.bot = 160;
+	g.button[g.nbuttons].r.bot = 210;
 	g.button[g.nbuttons].r.right =
 	   g.button[g.nbuttons].r.left + g.button[g.nbuttons].r.width;
 	g.button[g.nbuttons].r.top = g.button[g.nbuttons].r.bot +
@@ -648,13 +648,15 @@ void init()
 	strcpy(g.button[g.nbuttons].text, "Quit");
 	g.button[g.nbuttons].down = 0;
 	g.button[g.nbuttons].click = 0;
-	g.button[g.nbuttons].color[0] = 0.3f;
-	g.button[g.nbuttons].color[1] = 0.3f;
-	g.button[g.nbuttons].color[2] = 0.6f;
+	g.button[g.nbuttons].color[0] = 0.0f;
+	g.button[g.nbuttons].color[1] = 0.4f;
+	g.button[g.nbuttons].color[2] = 0.0f;
 	g.button[g.nbuttons].dcolor[0] = g.button[g.nbuttons].color[0] * 0.5f;
 	g.button[g.nbuttons].dcolor[1] = g.button[g.nbuttons].color[1] * 0.5f;
 	g.button[g.nbuttons].dcolor[2] = g.button[g.nbuttons].color[2] * 0.5f;
 	g.button[g.nbuttons].text_color = 0x00ffffff;
+	g.nbuttons++;
+	//credits_screen_box(g.button);
 	g.nbuttons++;
 }
 
@@ -726,7 +728,7 @@ int checkKeys(XEvent *e)
 			// help screen state varialbe 
 			g.help = help_screen(g.help);
 			break;
-			case XK_k:
+		case XK_k:
                 // To change the color of the snake
                         g.changeSnakeColor = change_snake_color();
                         //if (g.changeSnakeColor == 1) {
@@ -982,10 +984,9 @@ void physics(void)
 		Log("new rat: %i %i\n",g.rat.pos[0],g.rat.pos[1]);
 		return;
 	}
-	//int tmp; 
-	//extern int hawkphysics(int *head[], Hawk *h);
-	//tmp = hawkphysics(&headpos[2]);
-	//g.gameover = tmp;
+	 
+	//extern int hawkphysics(int *headpos[], Hawk *h);
+        //hawkphysics(headpos[2], Hawk *h);
 }
 
 void render(void)
@@ -1067,13 +1068,17 @@ void render(void)
 		}
 	}
 	//draw the main game board in middle of screen
-	glColor3f(0.6f, 0.5f, 0.2f);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
+	//glColor3f(0.6f, 0.5f, 0.2f);
+	glColor4f(0.4, 0.6, 0.2, 0.85);
 	glBegin(GL_QUADS);
 		glVertex2i(s0-b2, s1-b2);
 		glVertex2i(s0-b2, s1+b2);
 		glVertex2i(s0+b2, s1+b2);
 		glVertex2i(s0+b2, s1-b2);
 	glEnd();
+	glDisable(GL_BLEND);
 	//
 	//grid lines...
 	int x0 = s0-b2;
@@ -1102,8 +1107,10 @@ void render(void)
 	//draw snake...
 	#ifdef COLORFUL_SNAKE
 	//float c[3]={1.0f,1.0,0.5};
-	float val = g.changeSnakeColor;
-	float c[3] = {val, val, val};
+	float val_1 = g.changeSnakeColor;
+	float val_2 = change_snake_color();
+	float val_3 = change_snake_color();
+	float c[3] = {val_1, 1 - val_2, val_3 - val_1};
 	float rgb[3];
 	rgb[0] = -0.9 / (float)g.snake.length;
 	rgb[2] = -0.45 / (float)g.snake.length;
@@ -1153,7 +1160,6 @@ void render(void)
 
 	//Changed to better fit out game
 	ggprint16(&r, 16, 0x00ffffff, "Venom");
-
 	//Yeana's help screen
 	if (g.help) {
 	    // show help screen
@@ -1169,8 +1175,9 @@ void render(void)
             //green += g.changeSnakeColor;
             //blue -= g.changeSnakeColor;
 
-            val = change_snake_color();
-
+            val_1 = change_snake_color();
+            val_2 = change_snake_color();
+            val_3 = change_snake_color();
         }
 
 	//Darien's Startup Screen
@@ -1184,7 +1191,7 @@ void render(void)
 	}
 	//jayden's you lost screen
 	if (g.gameover){
-	    //show you lost
+	    //show you lost 
 	    showyoulost(g.xres,g.yres);
 	}
 	//jayden crate hawks
