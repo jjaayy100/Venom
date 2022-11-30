@@ -89,9 +89,11 @@ typedef struct t_rat {
 	int status;
 	int pos[2];
 } Rat;
-//
-//
-//
+//jayden added
+typedef struct t_hawk{
+        int status;
+	int pos[2]; 
+} Hawk; 
 //
 #define MAXBUTTONS 4
 typedef struct t_button {
@@ -193,6 +195,7 @@ struct Global {
 	Grid grid[MAX_GRID][MAX_GRID];
 	Snake snake;
 	Rat rat;
+	Hawk hawk;
 	int gridDim;
 	int boardDim;
 	int gameover;
@@ -298,6 +301,7 @@ public:
 		if (e->type != ConfigureNotify)
 			return;
 		XConfigureEvent xce = e->xconfigure;
+
 		if (xce.width != g.xres || xce.height != g.yres) {
 			//Window size did change.
 			reshapeWindow(xce.width, xce.height);
@@ -597,6 +601,9 @@ void init()
 	//
 	initSnake();
 	initRat();
+	//jayden added
+	extern void initHawk(Hawk *h);
+	initHawk(&g.hawk);
 	//
 	//initialize buttons...
 	g.nbuttons=0;
@@ -655,6 +662,8 @@ void resetGame()
 {
 	initSnake();
 	initRat();
+	extern void initHawk(Hawk *h);
+        initHawk(&g.hawk);
 	g.gameover  = 0;
 	g.winner    = 0;
 	g.reset = 1;
@@ -716,8 +725,7 @@ int checkKeys(XEvent *e)
 			// help screen state varialbe 
 			g.help = help_screen(g.help);
 			break;
-
-			case XK_k:
+		case XK_k:
                 // To change the color of the snake
                         g.changeSnakeColor = change_snake_color();
                         //if (g.changeSnakeColor == 1) {
@@ -744,6 +752,9 @@ int checkKeys(XEvent *e)
 			break;
 		case XK_b:
 			g.setbackground = changebackground(g.setbackground);
+			break;
+		case XK_m:
+			g.timestat = g.timestat ^ 1;
 			break;
 		case XK_j:
 			Money();
@@ -965,12 +976,17 @@ void physics(void)
 		Log("new rat: %i %i\n",g.rat.pos[0],g.rat.pos[1]);
 		return;
 	}
+	//int tmp; 
+	//extern int hawkphysics(int *head[], Hawk *h);
+	//tmp = hawkphysics(&headpos[2]);
+	//g.gameover = tmp;
 }
 
 void render(void)
 {
 	int i,j;
 	Rect r;
+
 	//--------------------------------------------------------
 	//This code is repeated several times in this program, so
 	//it can be made more generic and cleaner with some work.
@@ -1080,8 +1096,10 @@ void render(void)
 	//draw snake...
 	#ifdef COLORFUL_SNAKE
 	//float c[3]={1.0f,1.0,0.5};
-	float val = g.changeSnakeColor;
-	float c[3] = {val, val, val};
+	float val_1 = g.changeSnakeColor;
+	float val_2 = change_snake_color();
+	float val_3 = change_snake_color();
+	float c[3] = {val_1, 1 - val_2, val_3 - val_1};
 	float rgb[3];
 	rgb[0] = -0.9 / (float)g.snake.length;
 	rgb[2] = -0.45 / (float)g.snake.length;
@@ -1147,8 +1165,9 @@ void render(void)
             //green += g.changeSnakeColor;
             //blue -= g.changeSnakeColor;
 
-            val = change_snake_color();
-
+            val_1 = change_snake_color();
+            val_2 = change_snake_color();
+            val_3 = change_snake_color();
         }
 
 	//Darien's Startup Screen
