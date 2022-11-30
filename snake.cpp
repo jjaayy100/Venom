@@ -1061,13 +1061,17 @@ void render(void)
 		}
 	}
 	//draw the main game board in middle of screen
-	glColor3f(0.6f, 0.5f, 0.2f);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
+	//glColor3f(0.6f, 0.5f, 0.2f);
+	glColor4f(0.4, 0.6, 0.2, 0.85);
 	glBegin(GL_QUADS);
 		glVertex2i(s0-b2, s1-b2);
 		glVertex2i(s0-b2, s1+b2);
 		glVertex2i(s0+b2, s1+b2);
 		glVertex2i(s0+b2, s1-b2);
 	glEnd();
+	glDisable(GL_BLEND);
 	//
 	//grid lines...
 	int x0 = s0-b2;

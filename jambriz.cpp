@@ -124,7 +124,7 @@ int timer(int xres, int yres)
     int h = w/2;
     int xpos = (xres/2)+300;
     int ypos = (yres/2)+160;
-    glColor3ub(150, 160, 220); 
+    glColor3ub(50, 150, 50); 
     glPushMatrix();
     glTranslatef(xpos, ypos, 0.0f);
     glBegin(GL_QUADS); 
@@ -139,16 +139,16 @@ int timer(int xres, int yres)
     r.center = 50;
     //Display time in the corect 00:00 (min:sec) format
     if (j.min<10 && j.seconds<10) {
-        ggprint16(&r, 50, 0xffffffff, "Time: 0%d:0%d",j.min,j.seconds);
+        ggprint16(&r, 50, 0xffffffff, "0%d:0%d",j.min,j.seconds);
     }
     else if (j.min<10 && j.seconds>=10) {
-        ggprint16(&r, 50, 0xffffffff, "Time: 0%d:%d",j.min,j.seconds);
+        ggprint16(&r, 50, 0xffffffff, "0%d:%d",j.min,j.seconds);
     }
     else if (j.min>=10 && j.seconds<10) {
-        ggprint16(&r, 50, 0xffffffff, "Time: %d:0%d",j.min,j.seconds);
+        ggprint16(&r, 50, 0xffffffff, "%d:0%d",j.min,j.seconds);
     }
     else {
-        ggprint16(&r, 50, 0xffffffff, "Time: %d:%d",j.min,j.seconds);
+        ggprint16(&r, 50, 0xffffffff, "%d:%d",j.min,j.seconds);
     }
     return 0;
 }
