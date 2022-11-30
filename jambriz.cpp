@@ -12,6 +12,18 @@
 #include "fonts.h"
 using namespace std;
 
+#define MAXBUTTONS 4
+typedef struct t_button {
+	Rect r;
+	char text[32];
+	int over;
+	int down;
+	int click;
+	float color[3];
+	float dcolor[3];
+	unsigned int text_color;
+} Button;
+
 struct Jlobal {
     int gamestart;
     int reset;
@@ -28,10 +40,13 @@ struct Jlobal {
 	GLuint BackGroundTexture4;
 	GLuint BackGroundTexture5;
 	GLuint snakectexture;
+    Button button[MAXBUTTONS];
+	int nbuttons;
     Jlobal(){
         gamestart = time(NULL);
         timerstart = time(NULL);
         whatbackground = 1;
+        nbuttons = 0;
     }
 } j;
 
@@ -45,6 +60,32 @@ void get_textures(GLuint BackgroundTexture, GLuint BackgroundTexture2, GLuint Ba
 
 }
 
+void credits_screen_box(Button button[])
+{
+    j.button[3] = button[3];
+    j.button[j.nbuttons].r.width = 140;
+	j.button[j.nbuttons].r.height = 60;
+	j.button[j.nbuttons].r.left = 20;
+	j.button[j.nbuttons].r.bot = 500;
+	j.button[j.nbuttons].r.right =
+	   j.button[j.nbuttons].r.left + j.button[j.nbuttons].r.width;
+	j.button[j.nbuttons].r.top =
+	   j.button[j.nbuttons].r.bot + j.button[j.nbuttons].r.height;
+	j.button[j.nbuttons].r.centerx =
+	   (j.button[j.nbuttons].r.left + j.button[j.nbuttons].r.right) / 2;
+	j.button[j.nbuttons].r.centery =
+	   (j.button[j.nbuttons].r.bot + j.button[j.nbuttons].r.top) / 2;
+	strcpy(j.button[j.nbuttons].text, "Credits");
+	j.button[j.nbuttons].down = 0;
+	j.button[j.nbuttons].click = 0;
+	j.button[j.nbuttons].color[0] = 0.0f;
+	j.button[j.nbuttons].color[1] = 0.4f;
+	j.button[j.nbuttons].color[2] = 0.0f;
+	j.button[j.nbuttons].dcolor[0] = j.button[j.nbuttons].color[0] * 0.5f;
+	j.button[j.nbuttons].dcolor[1] = j.button[j.nbuttons].color[1] * 0.5f;
+	j.button[j.nbuttons].dcolor[2] = j.button[j.nbuttons].color[2] * 0.5f;
+	j.button[j.nbuttons].text_color = 0x00ffffff;
+}
 
 //This function will update values from the Global struct in snake.cpp
 //to Jlobal in this source file to increase functionality. This could be improved.
@@ -83,7 +124,7 @@ int timer(int xres, int yres)
     int h = w/2;
     int xpos = (xres/2)+300;
     int ypos = (yres/2)+160;
-    glColor3ub(150, 160, 220); 
+    glColor3ub(50, 150, 50); 
     glPushMatrix();
     glTranslatef(xpos, ypos, 0.0f);
     glBegin(GL_QUADS); 
@@ -98,16 +139,16 @@ int timer(int xres, int yres)
     r.center = 50;
     //Display time in the corect 00:00 (min:sec) format
     if (j.min<10 && j.seconds<10) {
-        ggprint16(&r, 50, 0xffffffff, "Time: 0%d:0%d",j.min,j.seconds);
+        ggprint16(&r, 50, 0xffffffff, "0%d:0%d",j.min,j.seconds);
     }
     else if (j.min<10 && j.seconds>=10) {
-        ggprint16(&r, 50, 0xffffffff, "Time: 0%d:%d",j.min,j.seconds);
+        ggprint16(&r, 50, 0xffffffff, "0%d:%d",j.min,j.seconds);
     }
     else if (j.min>=10 && j.seconds<10) {
-        ggprint16(&r, 50, 0xffffffff, "Time: %d:0%d",j.min,j.seconds);
+        ggprint16(&r, 50, 0xffffffff, "%d:0%d",j.min,j.seconds);
     }
     else {
-        ggprint16(&r, 50, 0xffffffff, "Time: %d:%d",j.min,j.seconds);
+        ggprint16(&r, 50, 0xffffffff, "%d:%d",j.min,j.seconds);
     }
     return 0;
 }

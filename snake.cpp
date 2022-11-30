@@ -161,7 +161,7 @@ public:
 	}
 };
 Image img[6] = {"./images/snake1.jpg",
-				"./images/marble.gif",
+				"./images/grandmother_flower.jpg",
 				"./images/pattern_sand.jpg",
 				"./images/roof_distance.jpg",
 				"./images/exotic_plants_side.jpg",
@@ -623,9 +623,9 @@ void init()
 	strcpy(g.button[g.nbuttons].text, "Reset");
 	g.button[g.nbuttons].down = 0;
 	g.button[g.nbuttons].click = 0;
-	g.button[g.nbuttons].color[0] = 0.4f;
+	g.button[g.nbuttons].color[0] = 0.0f;
 	g.button[g.nbuttons].color[1] = 0.4f;
-	g.button[g.nbuttons].color[2] = 0.7f;
+	g.button[g.nbuttons].color[2] = 0.0f; //7
 	g.button[g.nbuttons].dcolor[0] = g.button[g.nbuttons].color[0] * 0.5f;
 	g.button[g.nbuttons].dcolor[1] = g.button[g.nbuttons].color[1] * 0.5f;
 	g.button[g.nbuttons].dcolor[2] = g.button[g.nbuttons].color[2] * 0.5f;
@@ -634,7 +634,7 @@ void init()
 	g.button[g.nbuttons].r.width = 140;
 	g.button[g.nbuttons].r.height = 60;
 	g.button[g.nbuttons].r.left = 20;
-	g.button[g.nbuttons].r.bot = 160;
+	g.button[g.nbuttons].r.bot = 210;
 	g.button[g.nbuttons].r.right =
 	   g.button[g.nbuttons].r.left + g.button[g.nbuttons].r.width;
 	g.button[g.nbuttons].r.top = g.button[g.nbuttons].r.bot +
@@ -646,13 +646,15 @@ void init()
 	strcpy(g.button[g.nbuttons].text, "Quit");
 	g.button[g.nbuttons].down = 0;
 	g.button[g.nbuttons].click = 0;
-	g.button[g.nbuttons].color[0] = 0.3f;
-	g.button[g.nbuttons].color[1] = 0.3f;
-	g.button[g.nbuttons].color[2] = 0.6f;
+	g.button[g.nbuttons].color[0] = 0.0f;
+	g.button[g.nbuttons].color[1] = 0.4f;
+	g.button[g.nbuttons].color[2] = 0.0f;
 	g.button[g.nbuttons].dcolor[0] = g.button[g.nbuttons].color[0] * 0.5f;
 	g.button[g.nbuttons].dcolor[1] = g.button[g.nbuttons].color[1] * 0.5f;
 	g.button[g.nbuttons].dcolor[2] = g.button[g.nbuttons].color[2] * 0.5f;
 	g.button[g.nbuttons].text_color = 0x00ffffff;
+	g.nbuttons++;
+	//credits_screen_box(g.button);
 	g.nbuttons++;
 }
 
@@ -1059,13 +1061,17 @@ void render(void)
 		}
 	}
 	//draw the main game board in middle of screen
-	glColor3f(0.6f, 0.5f, 0.2f);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
+	//glColor3f(0.6f, 0.5f, 0.2f);
+	glColor4f(0.4, 0.6, 0.2, 0.85);
 	glBegin(GL_QUADS);
 		glVertex2i(s0-b2, s1-b2);
 		glVertex2i(s0-b2, s1+b2);
 		glVertex2i(s0+b2, s1+b2);
 		glVertex2i(s0+b2, s1-b2);
 	glEnd();
+	glDisable(GL_BLEND);
 	//
 	//grid lines...
 	int x0 = s0-b2;
