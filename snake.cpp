@@ -90,10 +90,10 @@ typedef struct t_rat {
 	int pos[2];
 } Rat;
 //jayden added
-typedef struct t_hawk{
-        int status;
-	int pos[2]; 
-} Hawk; 
+//typedef struct t_hawk{
+//        int status;
+//	int pos[2]; 
+//} Hawk; 
 //
 #define MAXBUTTONS 4
 typedef struct t_button {
@@ -199,6 +199,7 @@ struct Global {
 	int gridDim;
 	int boardDim;
 	int gameover;
+	int hawks;
 	int winner;
 	int gamestart;
 	unsigned int setbackground;
@@ -220,6 +221,7 @@ struct Global {
 		yres = 600;
 		gridDim = 40;
 		gameover = 0;
+		hawks = 0; 
 		winner = 0;
 		credits = 0;
 		nbuttons = 0;
@@ -665,6 +667,7 @@ void resetGame()
 	extern void initHawk(Hawk *h);
         initHawk(&g.hawk);
 	g.gameover  = 0;
+	g.hawks     = 0; 
 	g.winner    = 0;
 	g.reset = 1;
 }
@@ -743,6 +746,11 @@ int checkKeys(XEvent *e)
 			greeting();
 			break;
 		case XK_a:
+		        g.gameover = 1;
+		        showyoulost(g.xres,g.yres); 	
+			break;
+		case XK_e:
+			g.hawks = 1;
 			break;
 		case XK_c:
 			g.credits = set_credits_state(g.credits);
@@ -1187,6 +1195,10 @@ void render(void)
 	if (g.gameover){
 	    //show you lost
 	    showyoulost(g.xres,g.yres);
+	}
+	//jayden crate hawks
+	if (g.hawks){
+	    cratehawks(g.xres,g.yres, &g.hawk, cent);
 	}
 	//Jorge's credits screen
 	if (g.credits) {
