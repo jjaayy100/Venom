@@ -35,7 +35,8 @@
 // . Win and lose indication
 // . Additional features
 //
-//
+using namespace std;
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -204,7 +205,7 @@ struct Global {
 	unsigned int setbackground;
 	unsigned int pause;
 	unsigned int help;
-	float changeSnakeColor;
+	unsigned  changeSnakeColor;
 	unsigned int startup;
 	unsigned int mapsize;
 	unsigned int credits;
@@ -227,7 +228,7 @@ struct Global {
 		setbackground = 1;
 		pause = 0;
 		help = 0;
-		changeSnakeColor = 0.0;
+		changeSnakeColor = 0;
 		//initialize startup screen as on
 		startup = 1;
 		mapsize = 0;
@@ -727,10 +728,10 @@ int checkKeys(XEvent *e)
 			break;
 		case XK_k:
                 // To change the color of the snake
-                        g.changeSnakeColor = change_snake_color();
-                        //if (g.changeSnakeColor == 1) {
+                        g.changeSnakeColor++;
+                        if (g.changeSnakeColor == 2) {
                         //    g.changeSnakeColor = 0;
-                        //}
+                        }
                         break;
 
 		case XK_s:
@@ -1099,11 +1100,40 @@ void render(void)
 	//
 	//draw snake...
 	#ifdef COLORFUL_SNAKE
-	//float c[3]={1.0f,1.0,0.5};
-	float val_1 = g.changeSnakeColor;
-	float val_2 = change_snake_color();
-	float val_3 = change_snake_color();
-	float c[3] = {val_1, 1 - val_2, val_3 - val_1};
+	
+	float c[3]={1.0f,1.0,0.5};
+	// integer works!! 
+	//char count = char(g.changeSnakeColor);
+	if(g.changeSnakeColor == 1) {
+	    //std::cout << g.changeSnakeColor << std::endl;
+            c[0] = change_snake_color_1(g.changeSnakeColor);
+	    c[1] = change_snake_color_2(g.changeSnakeColor);
+	    c[2] = change_snake_color_3(g.changeSnakeColor);
+
+	}
+
+	if(g.changeSnakeColor == 2) {
+	    //std::cout << g.changeSnakeColor << std::endl;
+            c[0] = change_snake_color_1(g.changeSnakeColor);
+	    c[1] = change_snake_color_2(g.changeSnakeColor);
+	    c[2] = change_snake_color_3(g.changeSnakeColor);
+
+
+	}
+
+	if(g.changeSnakeColor > 2) {
+	    g.changeSnakeColor = 0;
+	}
+
+
+
+
+
+
+	//float val_1 = g.changeSnakeColor;
+	//float val_2 = change_snake_color();
+	//float val_3 = change_snake_color();
+	//float c[3] = {val_1, 1 - val_2, val_3};
 	float rgb[3];
 	rgb[0] = -0.9 / (float)g.snake.length;
 	rgb[2] = -0.45 / (float)g.snake.length;
@@ -1163,7 +1193,7 @@ void render(void)
 	}
 
 	// Yeana's feature 1: change the snake color 
-        if (g.changeSnakeColor == 1.0) {
+        /*if (g.changeSnakeColor == 1.0) {
 
             //red -= g.changeSnakeColor;
             //green += g.changeSnakeColor;
@@ -1172,7 +1202,7 @@ void render(void)
             val_1 = change_snake_color();
             val_2 = change_snake_color();
             val_3 = change_snake_color();
-        }
+        }*/
 
 	//Darien's Startup Screen
 	if (g.startup) {
