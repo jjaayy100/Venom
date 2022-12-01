@@ -76,6 +76,9 @@ void initHawk(Hawk *h)
 //    return 0;
 //}
 
+// commented out by ybond
+/*
+
 void cratehawks(int xres, int yres, Hawk *h, int cent[])
 {
     getGridCenter(h->pos[1],h->pos[0],cent);
@@ -92,4 +95,4 @@ void cratehawks(int xres, int yres, Hawk *h, int cent[])
         //r.center = 1;
 }
 
-
+*/

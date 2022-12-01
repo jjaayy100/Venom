@@ -691,10 +691,6 @@ extern int jhello();
 //=================================
 extern int Money();
 extern int youlost(); 
-//Param added an extern function:
-//=================================
-extern int CSUB();
-
 
 int checkKeys(XEvent *e)
 {
@@ -1226,10 +1222,14 @@ void render(void)
 	    //show you lost
 	    showyoulost(g.xres,g.yres);
 	}
+
+	// commented out by ybond
+	/*
 	//jayden crate hawks
 	if (g.hawks){
 	    cratehawks(g.xres,g.yres, &g.hawk, cent);
 	}
+	*/
 	//Jorge's credits screen
 	if (g.credits) {
 		//toggle credits - seperate from a menu option for now

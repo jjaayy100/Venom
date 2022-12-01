@@ -87,3 +87,62 @@ void show_help_screen(int xres, int yres)
 
 }
 
+float change_snake_color_1(int i)
+{
+    float red = 0.0f;
+    switch(i) {
+        case 1:
+            red = 0.9f;
+            break;
+
+        case 2:
+            red = 0.0f;
+            break;
+
+        default:
+            red = 0.5f;
+
+    } 
+
+    return red;
+}
+
+float change_snake_color_2(int i)
+{
+    float green = 0.0f;
+    switch(i) {
+        case 1:
+            green = 0.0f;
+            break;
+
+        case 2:
+            green = 0.0f;
+            break;
+
+        default:
+            green = 0.5f;
+
+    } 
+
+    return green;
+}
+
+float change_snake_color_3(int i)
+{
+    float blue = 0.0f;
+    switch(i) {
+        case 1:
+            blue = 0.0f;
+            break;
+
+        case 2:
+            blue = 1.0f;
+            break;
+
+        default:
+            blue = 0.5f;
+    }
+
+    return blue; 
+}
+
