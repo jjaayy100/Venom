@@ -62,6 +62,12 @@ extern void get_sounds(ALuint alSourceDrip, ALuint alSourceTick, ALuint alSource
     j.alSourceSGM = alSourceSGM;
 }
 
+bool isPlaying(ALuint source) {
+    ALenum state;
+    alGetSourcei(source, AL_SOURCE_STATE, &state);
+    return (state == AL_PLAYING);
+}
+
 void get_textures(GLuint BackgroundTexture, GLuint BackgroundTexture2, GLuint BackgroundTexture3, GLuint BackgroundTexture4, GLuint BackgroundTexture5)
 {
     j.BackGroundTexture = BackgroundTexture;
@@ -142,6 +148,9 @@ void get_class_data(int gameover, int timestat, int reset, int pause, int credit
         j.seconds = 0;
         j.min = 0;
     }
+    if (credits == 0 && (isPlaying(j.alSourceMCS))) {
+        alSourcePause(j.alSourceMCS);
+    }
 }
 
 int jhello()
@@ -197,6 +206,7 @@ int timer(int xres, int yres)
 
 unsigned int set_credits_state(unsigned int credits)
 {
+    j.credits = credits;
     credits = credits ^ 1;
     return credits;
 }
@@ -369,11 +379,6 @@ void draw_credits_box()
     }
 }
 
-bool isPlaying(ALuint source) {
-    ALenum state;
-    alGetSourcei(source, AL_SOURCE_STATE, &state);
-    return (state == AL_PLAYING);
-}
 
 void show_credits_screen(int xres, int yres, GLuint snakectexture)
 {

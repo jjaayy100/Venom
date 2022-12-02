@@ -204,8 +204,8 @@ struct Global {
 	Button button[MAXBUTTONS];
 	int nbuttons;
 	//
-	ALuint alBufferDrip, alBufferTick, alBufferBird;
-	ALuint alSourceDrip, alSourceTick, alSourceBird;
+	ALuint alBufferDrip, alBufferTick, alBufferBird, alBufferMCS, alBufferSGM;
+    ALuint alSourceDrip, alSourceTick, alSourceBird, alSourceMCS, alSourceSGM;
 	Global() {
 		xres = 800;
 		yres = 600;
@@ -428,7 +428,9 @@ void initSound()
 	g.alBufferDrip = alutCreateBufferFromFile("./sounds/drip.wav");
 	g.alBufferTick = alutCreateBufferFromFile("./sounds/tick.wav");
 	g.alBufferBird = alutCreateBufferFromFile("./sounds/bird.wav");
-	//
+	g.alBufferMCS = alutCreateBufferFromFile("./sounds/music_for_credits_screen.wav");
+    g.alBufferSGM = alutCreateBufferFromFile("./sounds/start_game.wav");
+
 	//Source refers to the sound.
 	//Generate a source, and store it in a buffer.
 	alGenSources(1, &g.alSourceDrip);
@@ -463,6 +465,30 @@ void initSound()
 		printf("ERROR: setting source\n");
 		return;
 	}
+    //Generate a source, and store it in a buffer.
+    alGenSources(1, &g.alSourceMCS);
+    alSourcei(g.alSourceMCS, AL_BUFFER, g.alBufferMCS);
+    //Set volume and pitch to normal, no looping of sound.
+    alSourcef(g.alSourceMCS, AL_GAIN, 1.0f);
+    alSourcef(g.alSourceMCS, AL_PITCH, 1.0f);
+    alSourcei(g.alSourceMCS, AL_LOOPING, AL_TRUE);
+    if (alGetError() != AL_NO_ERROR) {
+        printf("ERROR: setting source\n");
+        return;
+    }
+    //Generate a source, and store it in a buffer.
+    alGenSources(1, &g.alSourceSGM);
+    alSourcei(g.alSourceSGM, AL_BUFFER, g.alBufferSGM);
+    //Set volume and pitch to normal, no looping of sound.
+    alSourcef(g.alSourceSGM, AL_GAIN, 1.0f);
+    alSourcef(g.alSourceSGM, AL_PITCH, 1.0f);
+    alSourcei(g.alSourceSGM, AL_LOOPING, AL_FALSE);
+    if (alGetError() != AL_NO_ERROR) {
+        printf("ERROR: setting source\n");
+        return;
+    }
+    get_sounds(g.alSourceDrip, g.alSourceTick, g.alSourceBird, g.alSourceMCS, g.alSourceSGM);
+
 	#endif //USE_OPENAL_SOUND
 }
 
@@ -473,10 +499,15 @@ void cleanupSound()
 	alDeleteSources(1, &g.alSourceDrip);
 	alDeleteSources(1, &g.alSourceTick);
 	alDeleteSources(1, &g.alSourceBird);
+	alDeleteSources(1, &g.alSourceMCS);
+	alDeleteSources(1, &g.alSourceSGM);
+	
 	//Delete the buffer.
 	alDeleteBuffers(1, &g.alBufferDrip);
 	alDeleteBuffers(1, &g.alBufferTick);
 	alDeleteBuffers(1, &g.alBufferBird);
+	alDeleteBuffers(1, &g.alBufferMCS);
+	alDeleteBuffers(1, &g.alBufferSGM);
 	//Close out OpenAL itself.
 	//Get active context.
 	ALCcontext *Context = alcGetCurrentContext();
@@ -583,6 +614,7 @@ void initOpengl(void)
 
 void initSnake()
 {
+	playSound(g.alSourceSGM);
 	int i;
 	g.snake.status = 1;
 	g.snake.delay = .15;
