@@ -35,7 +35,8 @@
 // . Win and lose indication
 // . Additional features
 //
-//
+using namespace std;
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -95,17 +96,6 @@ typedef struct t_rat {
 //	int pos[2]; 
 //} Hawk; 
 //
-#define MAXBUTTONS 4
-typedef struct t_button {
-	Rect r;
-	char text[32];
-	int over;
-	int down;
-	int click;
-	float color[3];
-	float dcolor[3];
-	unsigned int text_color;
-} Button;
 
 class Image {
 public:
@@ -160,12 +150,13 @@ public:
 			unlink(ppmname);
 	}
 };
-Image img[6] = {"./images/snake1.jpg",
+Image img[7] = {"./images/snake1.jpg",
 				"./images/grandmother_flower.jpg",
 				"./images/pattern_sand.jpg",
 				"./images/roof_distance.jpg",
 				"./images/exotic_plants_side.jpg",
-				"./images/stream_horizontal.jpg"};
+				"./images/stream_horizontal.jpg",
+                                "./images/pimp.jpg"};
 
 struct Textures {
 	Image *background;
@@ -174,12 +165,14 @@ struct Textures {
 	Image *background4;
 	Image *background5;
 	Image *snakecimage;
+	Image *LostScreen;
 	GLuint BackgroundTexture;
 	GLuint BackgroundTexture2;
 	GLuint BackgroundTexture3;
 	GLuint BackgroundTexture4;
 	GLuint BackgroundTexture5;
 	GLuint snakectexture;
+	GLuint Losttexture;
 	Textures() {
 		background=NULL;
 		background2=NULL;
@@ -187,6 +180,7 @@ struct Textures {
 		background4=NULL;
 		background5=NULL;
 		snakecimage=NULL;
+		LostScreen=NULL;
 	}
 }t;
 
@@ -205,7 +199,7 @@ struct Global {
 	unsigned int setbackground;
 	unsigned int pause;
 	unsigned int help;
-	float changeSnakeColor;
+	unsigned  changeSnakeColor;
 	unsigned int startup;
 	unsigned int mapsize;
 	unsigned int credits;
@@ -214,8 +208,8 @@ struct Global {
 	Button button[MAXBUTTONS];
 	int nbuttons;
 	//
-	ALuint alBufferDrip, alBufferTick;
-	ALuint alSourceDrip, alSourceTick;
+	ALuint alBufferDrip, alBufferTick, alBufferBird, alBufferMCS, alBufferSGM;
+    ALuint alSourceDrip, alSourceTick, alSourceBird, alSourceMCS, alSourceSGM;
 	Global() {
 		xres = 800;
 		yres = 600;
@@ -229,7 +223,7 @@ struct Global {
 		setbackground = 1;
 		pause = 0;
 		help = 0;
-		changeSnakeColor = 0.0;
+		changeSnakeColor = 0;
 		//initialize startup screen as on
 		startup = 1;
 		mapsize = 0;
@@ -368,6 +362,7 @@ int main(int argc, char *argv[])
 	srand((unsigned int)time(NULL));
 	clock_gettime(CLOCK_REALTIME, &timePause);
 	clock_gettime(CLOCK_REALTIME, &timeStart);
+	playSound(g.alSourceBird);
 	int done = 0;
 	while (!done) {
 		while (x11.getXPending()) {
@@ -404,7 +399,7 @@ int main(int argc, char *argv[])
 		render();
 		x11.swapBuffers();
 		//Send data to jambriz.cpp file for Jlobal(Still in testing)
-		get_class_data(g.gameover, g.timestat, g.reset, g.pause);
+		get_class_data(g.gameover, g.timestat, g.reset, g.pause, g.credits);
 		if(g.reset) {
 			g.reset = 0;
 		}
@@ -436,7 +431,10 @@ void initSound()
 	//Buffer holds the sound information.
 	g.alBufferDrip = alutCreateBufferFromFile("./sounds/drip.wav");
 	g.alBufferTick = alutCreateBufferFromFile("./sounds/tick.wav");
-	//
+	g.alBufferBird = alutCreateBufferFromFile("./sounds/bird.wav");
+	g.alBufferMCS = alutCreateBufferFromFile("./sounds/music_for_credits_screen.wav");
+    g.alBufferSGM = alutCreateBufferFromFile("./sounds/start_game.wav");
+
 	//Source refers to the sound.
 	//Generate a source, and store it in a buffer.
 	alGenSources(1, &g.alSourceDrip);
@@ -460,6 +458,41 @@ void initSound()
 		printf("ERROR: setting source\n");
 		return;
 	}
+	//Generate a source, and store it in a buffer.
+	alGenSources(1, &g.alSourceBird);
+	alSourcei(g.alSourceBird, AL_BUFFER, g.alBufferBird);
+	//Set volume and pitch to normal, no looping of sound.
+	alSourcef(g.alSourceBird, AL_GAIN, 1.0f);
+	alSourcef(g.alSourceBird, AL_PITCH, 1.0f);
+	alSourcei(g.alSourceBird, AL_LOOPING, AL_TRUE);
+	if (alGetError() != AL_NO_ERROR) {
+		printf("ERROR: setting source\n");
+		return;
+	}
+    //Generate a source, and store it in a buffer.
+    alGenSources(1, &g.alSourceMCS);
+    alSourcei(g.alSourceMCS, AL_BUFFER, g.alBufferMCS);
+    //Set volume and pitch to normal, no looping of sound.
+    alSourcef(g.alSourceMCS, AL_GAIN, 1.0f);
+    alSourcef(g.alSourceMCS, AL_PITCH, 1.0f);
+    alSourcei(g.alSourceMCS, AL_LOOPING, AL_TRUE);
+    if (alGetError() != AL_NO_ERROR) {
+        printf("ERROR: setting source\n");
+        return;
+    }
+    //Generate a source, and store it in a buffer.
+    alGenSources(1, &g.alSourceSGM);
+    alSourcei(g.alSourceSGM, AL_BUFFER, g.alBufferSGM);
+    //Set volume and pitch to normal, no looping of sound.
+    alSourcef(g.alSourceSGM, AL_GAIN, 1.0f);
+    alSourcef(g.alSourceSGM, AL_PITCH, 1.0f);
+    alSourcei(g.alSourceSGM, AL_LOOPING, AL_FALSE);
+    if (alGetError() != AL_NO_ERROR) {
+        printf("ERROR: setting source\n");
+        return;
+    }
+    get_sounds(g.alSourceDrip, g.alSourceTick, g.alSourceBird, g.alSourceMCS, g.alSourceSGM);
+
 	#endif //USE_OPENAL_SOUND
 }
 
@@ -469,9 +502,16 @@ void cleanupSound()
 	//First delete the source.
 	alDeleteSources(1, &g.alSourceDrip);
 	alDeleteSources(1, &g.alSourceTick);
+	alDeleteSources(1, &g.alSourceBird);
+	alDeleteSources(1, &g.alSourceMCS);
+	alDeleteSources(1, &g.alSourceSGM);
+	
 	//Delete the buffer.
 	alDeleteBuffers(1, &g.alBufferDrip);
 	alDeleteBuffers(1, &g.alBufferTick);
+	alDeleteBuffers(1, &g.alBufferBird);
+	alDeleteBuffers(1, &g.alBufferMCS);
+	alDeleteBuffers(1, &g.alBufferSGM);
 	//Close out OpenAL itself.
 	//Get active context.
 	ALCcontext *Context = alcGetCurrentContext();
@@ -522,6 +562,7 @@ void initOpengl(void)
 	t.background3 = &img[3];
 	t.background4 = &img[4];
 	t.background5 = &img[5];
+	t.LostScreen = &img[6]; 
 	
 	//
 	//create opengl texture elements
@@ -573,11 +614,20 @@ void initOpengl(void)
 	glTexImage2D(GL_TEXTURE_2D, 0, 3,
 	             t.snakecimage->width, t.snakecimage->height,
 	             0, GL_RGB, GL_UNSIGNED_BYTE, t.snakecimage->data);
+	//Lost Screen
+	glGenTextures(1, &t.Losttexture);
+	glBindTexture(GL_TEXTURE_2D, t.Losttexture);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+        glTexImage2D(GL_TEXTURE_2D, 0, 3,
+		     t.LostScreen->width, t.LostScreen->height,
+		     0, GL_RGB, GL_UNSIGNED_BYTE, t.LostScreen->data);
 	get_textures(t.BackgroundTexture, t.BackgroundTexture2, t.BackgroundTexture3, t.BackgroundTexture4, t.BackgroundTexture5);
 }
 
 void initSnake()
 {
+	playSound(g.alSourceSGM);
 	int i;
 	g.snake.status = 1;
 	g.snake.delay = .15;
@@ -604,8 +654,8 @@ void init()
 	initSnake();
 	initRat();
 	//jayden added
-	extern void initHawk(Hawk *h);
-	initHawk(&g.hawk);
+	//extern void initHawk(Hawk *h);
+	//initHawk(&g.hawk);
 	//
 	//initialize buttons...
 	g.nbuttons=0;
@@ -656,7 +706,10 @@ void init()
 	g.button[g.nbuttons].dcolor[2] = g.button[g.nbuttons].color[2] * 0.5f;
 	g.button[g.nbuttons].text_color = 0x00ffffff;
 	g.nbuttons++;
-	//credits_screen_box(g.button);
+	//Credits Screen Button
+	g.button[3] = credits_screen_box();
+	g.nbuttons++;
+	g.button[4] = donec_box();
 	g.nbuttons++;
 }
 
@@ -664,8 +717,7 @@ void resetGame()
 {
 	initSnake();
 	initRat();
-	extern void initHawk(Hawk *h);
-        initHawk(&g.hawk);
+	cleanhawk(&g.hawk); 
 	g.gameover  = 0;
 	g.hawks     = 0; 
 	g.winner    = 0;
@@ -690,10 +742,6 @@ extern int jhello();
 //=================================
 extern int Money();
 extern int youlost(); 
-//Param added an extern function:
-//=================================
-extern int CSUB();
-
 
 int checkKeys(XEvent *e)
 {
@@ -730,10 +778,10 @@ int checkKeys(XEvent *e)
 			break;
 		case XK_k:
                 // To change the color of the snake
-                        g.changeSnakeColor = change_snake_color();
-                        //if (g.changeSnakeColor == 1) {
+                        g.changeSnakeColor++;
+                        if (g.changeSnakeColor == 2) {
                         //    g.changeSnakeColor = 0;
-                        //}
+                        }
                         break;
 
 		case XK_s:
@@ -745,7 +793,7 @@ int checkKeys(XEvent *e)
 		case XK_d:
 			greeting();
 			break;
-		case XK_a:
+		case XK_v:
 		        g.gameover = 1;
 		        showyoulost(g.xres,g.yres); 	
 			break;
@@ -760,9 +808,6 @@ int checkKeys(XEvent *e)
 			break;
 		case XK_b:
 			g.setbackground = changebackground(g.setbackground);
-			break;
-		case XK_m:
-			g.timestat = g.timestat ^ 1;
 			break;
 		case XK_j:
 			Money();
@@ -841,11 +886,18 @@ int checkMouse(XEvent *e)
 							cleanupSound();
 							exit(0);
 							break;
+						case 2:
+							g.credits = set_credits_state(g.credits);
+							break;
+						case 3:
+							g.credits = set_credits_state(g.credits);
+							break;
 					}
 				}
 			}
 		}
 	}
+	check_credits_box(e);
 	return 0;
 }
 
@@ -874,10 +926,7 @@ void getGridCenter(const int i, const int j, int cent[2])
 
 void physics(void)
 {
-	while(g.startup){
-		return;
-	}
-	while(g.pause){
+	while(g.startup || g.pause || g.credits || g.help) {
 		return;
 	}
 	int i;
@@ -938,6 +987,10 @@ void physics(void)
 		}
 	}
 	//
+	hawkgameover(g.snake.length, g.snake.pos, &g.gameover, &g.hawk);
+	
+
+        //
 	newpos[0] = headpos[0];
 	newpos[1] = headpos[1];
 	for (i=1; i<g.snake.length; i++) {
@@ -984,9 +1037,10 @@ void physics(void)
 		Log("new rat: %i %i\n",g.rat.pos[0],g.rat.pos[1]);
 		return;
 	}
-	 
-	//extern int hawkphysics(int *headpos[], Hawk *h);
-        //hawkphysics(headpos[2], Hawk *h);
+	//int tmp; 
+	//extern int hawkphysics(int *head[], Hawk *h);
+	//tmp = hawkphysics(&headpos[2]);
+	//g.gameover = tmp;
 }
 
 void render(void)
@@ -1067,6 +1121,48 @@ void render(void)
 			ggprint16(&r, 0, g.button[i].text_color, g.button[i].text);
 		}
 	}
+	draw_credits_box();
+	if (g.mapsize) {
+		//render the map resize
+		resize_map(g.xres, g.yres, g.boardDim, g.gridDim, g.setbackground);
+		for (i=0; i<g.nbuttons; i++) {
+		if (g.button[i].over) {
+			int w=2;
+			glColor3f(1.0f, 1.0f, 0.0f);
+			//draw a highlight around button
+			glLineWidth(3);
+			glBegin(GL_LINE_LOOP);
+				glVertex2i(g.button[i].r.left-w,  g.button[i].r.bot-w);
+				glVertex2i(g.button[i].r.left-w,  g.button[i].r.top+w);
+				glVertex2i(g.button[i].r.right+w, g.button[i].r.top+w);
+				glVertex2i(g.button[i].r.right+w, g.button[i].r.bot-w);
+				glVertex2i(g.button[i].r.left-w,  g.button[i].r.bot-w);
+			glEnd();
+			glLineWidth(1);
+		}
+		if (g.button[i].down) {
+			glColor3fv(g.button[i].dcolor);
+		} else {
+			glColor3fv(g.button[i].color);
+		}
+		glBegin(GL_QUADS);
+			glVertex2i(g.button[i].r.left,  g.button[i].r.bot);
+			glVertex2i(g.button[i].r.left,  g.button[i].r.top);
+			glVertex2i(g.button[i].r.right, g.button[i].r.top);
+			glVertex2i(g.button[i].r.right, g.button[i].r.bot);
+		glEnd();
+		r.left = g.button[i].r.centerx;
+		r.bot  = g.button[i].r.centery-8;
+		r.center = 1;
+		if (g.button[i].down) {
+			ggprint16(&r, 0, g.button[i].text_color, "Pressed!");
+		} else {
+			ggprint16(&r, 0, g.button[i].text_color, g.button[i].text);
+		}
+	}
+	draw_credits_box();
+	}
+	else {
 	//draw the main game board in middle of screen
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
@@ -1101,16 +1197,46 @@ void render(void)
 		glVertex2i(x0,y1);
 	}
 	glEnd();
+	}
 	//
 	#define COLORFUL_SNAKE
 	//
 	//draw snake...
 	#ifdef COLORFUL_SNAKE
-	//float c[3]={1.0f,1.0,0.5};
-	float val_1 = g.changeSnakeColor;
-	float val_2 = change_snake_color();
-	float val_3 = change_snake_color();
-	float c[3] = {val_1, 1 - val_2, val_3 - val_1};
+	
+	float c[3]={1.0f,1.0,0.5};
+	// integer works!! 
+	//char count = char(g.changeSnakeColor);
+	if(g.changeSnakeColor == 1) {
+	    //std::cout << g.changeSnakeColor << std::endl;
+            c[0] = change_snake_color_1(g.changeSnakeColor);
+	    c[1] = change_snake_color_2(g.changeSnakeColor);
+	    c[2] = change_snake_color_3(g.changeSnakeColor);
+
+	}
+
+	if(g.changeSnakeColor == 2) {
+	    //std::cout << g.changeSnakeColor << std::endl;
+            c[0] = change_snake_color_1(g.changeSnakeColor);
+	    c[1] = change_snake_color_2(g.changeSnakeColor);
+	    c[2] = change_snake_color_3(g.changeSnakeColor);
+
+
+	}
+
+	if(g.changeSnakeColor > 2) {
+	    g.changeSnakeColor = 0;
+	}
+
+
+
+
+
+
+	//float val_1 = g.changeSnakeColor;
+	//float val_2 = change_snake_color();
+	//float val_3 = change_snake_color();
+	//float c[3] = {val_1, 1 - val_2, val_3};
 	float rgb[3];
 	rgb[0] = -0.9 / (float)g.snake.length;
 	rgb[2] = -0.45 / (float)g.snake.length;
@@ -1160,6 +1286,7 @@ void render(void)
 
 	//Changed to better fit out game
 	ggprint16(&r, 16, 0x00ffffff, "Venom");
+
 	//Yeana's help screen
 	if (g.help) {
 	    // show help screen
@@ -1169,7 +1296,7 @@ void render(void)
 	}
 
 	// Yeana's feature 1: change the snake color 
-        if (g.changeSnakeColor == 1.0) {
+        /*if (g.changeSnakeColor == 1.0) {
 
             //red -= g.changeSnakeColor;
             //green += g.changeSnakeColor;
@@ -1178,26 +1305,28 @@ void render(void)
             val_1 = change_snake_color();
             val_2 = change_snake_color();
             val_3 = change_snake_color();
-        }
+        }*/
 
 	//Darien's Startup Screen
 	if (g.startup) {
 		//startup screen will automatically be toggled
 		show_startup(g.xres,g.yres);
 	}
-	if (g.mapsize) {
-		//render the map resize
-		resize_map(g.xres, g.yres, g.boardDim, g.gridDim);
-	}
+
 	//jayden's you lost screen
 	if (g.gameover){
-	    //show you lost 
+	    //show you lost
 	    showyoulost(g.xres,g.yres);
+	    display_lost(g.xres,g.yres); 
 	}
+
 	//jayden crate hawks
 	if (g.hawks){
-	    cratehawks(g.xres,g.yres, &g.hawk, cent);
+	    cratehawks(&g.hawk, cent);
+	    extern void initHawk(Hawk *h);
+            initHawk(&g.hawk);
 	}
+
 	//Jorge's credits screen
 	if (g.credits) {
 		//toggle credits - seperate from a menu option for now

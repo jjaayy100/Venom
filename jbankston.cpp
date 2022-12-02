@@ -18,14 +18,29 @@
 
 using namespace std;
 
-struct Glo {
-    int gridDim;
-    Glo(){
-	Hawk hawk;
-	gridDim = 40;
-    }
-}n;
+struct Blobal
+{
+    GLuint LostTexture;
+} B;
 
+void get_textures(GLuint Losttexture)
+{
+    B.LostTexture = Losttexture;
+}
+
+void display_lost(int xres, int yres)
+{
+    glColor3f(0.5f, 0.5f, 0.5f);
+    glBindTexture(GL_TEXTURE_2D, B.LostTexture);
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f, 0.0f); glVertex2i(0, 0);
+    glTexCoord2f(0.0f, 1.0f); glVertex2i(0, yres);
+    glTexCoord2f(1.0f, 1.0f); glVertex2i(xres, yres);
+    glTexCoord2f(1.0f, 0.0f); glVertex2i(xres, 0);
+    glEnd();
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+}
 //typedef struct t_hawk{
 //        int status;
 //        int pos[2];
@@ -50,7 +65,6 @@ void youlost(int lost)
 
 void showyoulost(int xres, int yres)
 {
-
     Rect r; 
     int xcent = xres / 2; 
     int ycent = yres / 2;
@@ -66,30 +80,55 @@ void showyoulost(int xres, int yres)
     r.left = xcent;
     r.bot = ycent + 80;
     r.center = 50;
-    ggprint16(&r, 50, 0xffffffff, "YOU LOST");
-    ggprint16(&r, 50, 0xffffffff, "Press 'R' To Restart");
+	ggprint16(&r, 50, 0xffffffff, "Dont Be Sorry");
+	ggprint16(&r, 50, 0xffffffff, "Be Better");
+
+        ggprint16(&r, 50, 0xffffffff, "Press 'R' To Restart");
 }
 
 void initHawk(Hawk *h)
 {
-    h->status = 1; 
-    h->pos[0] = 25; 
-    h->pos[1] = 2; 
+    if (rand()%1000 < 5)
+    {	
+	h->status = 1; 
+	h->pos[0] = rand()%30; 
+	h->pos[1] = rand()%30; 
+    }
 }
 
-int hawkphysics(int *head[], Hawk *h)
+void cleanhawk(Hawk *h)
 {
-    while(1) {
-	h->pos[0] = rand() % n.gridDim;
-	h->pos[1] = rand() % n.gridDim;
+    h->status = 0;
+    h->pos[0] = -1;
+    h->pos[1] = -1;
+
+}
+
+//int hawkphysics(int *head[], Hawk *h)
+//{
+//   if (*head[0] == h->pos[0] && *head[1] == h->pos[1]){
+//	return 1;
+//    }
+//    return 0;
+//}
+
+void hawkgameover(int snakelength ,int pos[80*80][2], int *gameover, Hawk *h)
+{
+    for (int i=1; i< snakelength; i++) {
+	if ( pos[i][0] == h->pos[0] && 
+		pos[i][1] == h->pos[1]) {
+	    *gameover=1;
+	    return;
+	}
     }
 
+
 }
 
-void cratehawks(int xres, int yres, Hawk *h, int cent[])
+void cratehawks(Hawk *h, int cent[])
 {
     getGridCenter(h->pos[1],h->pos[0],cent);
-        glColor3f(0.82, 0.0f, 0.0f);
+        glColor3f(0.82, 0.1f, 0.0f);
         glBegin(GL_QUADS);
         glVertex2i(cent[0]-4, cent[1]-3);
         glVertex2i(cent[0]-4, cent[1]+4);
@@ -97,9 +136,6 @@ void cratehawks(int xres, int yres, Hawk *h, int cent[])
         glVertex2i(cent[0]+3, cent[1]-3);
         glEnd();
 
-	//r.left   = g.xres/2;
-        //r.bot    = g.yres-100;
-        //r.center = 1;
 }
 
 
