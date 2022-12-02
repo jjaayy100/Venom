@@ -35,7 +35,8 @@
 // . Win and lose indication
 // . Additional features
 //
-//
+using namespace std;
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -53,7 +54,7 @@
 #include "fonts.h"
 #include "jambriz.h"
 #include "jbankston.h"
-#include "help.h"
+#include "ybond.h"
 #include "dware.h"
 
 
@@ -90,10 +91,10 @@ typedef struct t_rat {
 	int pos[2];
 } Rat;
 //jayden added
-typedef struct t_hawk{
-        int status;
-	int pos[2]; 
-} Hawk; 
+//typedef struct t_hawk{
+//        int status;
+//	int pos[2]; 
+//} Hawk; 
 //
 #define MAXBUTTONS 4
 typedef struct t_button {
@@ -161,7 +162,7 @@ public:
 	}
 };
 Image img[6] = {"./images/snake1.jpg",
-				"./images/marble.gif",
+				"./images/grandmother_flower.jpg",
 				"./images/pattern_sand.jpg",
 				"./images/roof_distance.jpg",
 				"./images/exotic_plants_side.jpg",
@@ -199,12 +200,13 @@ struct Global {
 	int gridDim;
 	int boardDim;
 	int gameover;
+	int hawks;
 	int winner;
 	int gamestart;
 	unsigned int setbackground;
 	unsigned int pause;
 	unsigned int help;
-	float changeSnakeColor;
+	unsigned  changeSnakeColor;
 	unsigned int startup;
 	unsigned int mapsize;
 	unsigned int credits;
@@ -220,6 +222,7 @@ struct Global {
 		yres = 600;
 		gridDim = 40;
 		gameover = 0;
+		hawks = 0; 
 		winner = 0;
 		credits = 0;
 		nbuttons = 0;
@@ -227,7 +230,7 @@ struct Global {
 		setbackground = 1;
 		pause = 0;
 		help = 0;
-		changeSnakeColor = 0.0;
+		changeSnakeColor = 0;
 		//initialize startup screen as on
 		startup = 1;
 		mapsize = 0;
@@ -602,8 +605,8 @@ void init()
 	initSnake();
 	initRat();
 	//jayden added
-	extern void initHawk(Hawk *h);
-	initHawk(&g.hawk);
+	//extern void initHawk(Hawk *h);
+	//initHawk(&g.hawk);
 	//
 	//initialize buttons...
 	g.nbuttons=0;
@@ -623,9 +626,9 @@ void init()
 	strcpy(g.button[g.nbuttons].text, "Reset");
 	g.button[g.nbuttons].down = 0;
 	g.button[g.nbuttons].click = 0;
-	g.button[g.nbuttons].color[0] = 0.4f;
+	g.button[g.nbuttons].color[0] = 0.0f;
 	g.button[g.nbuttons].color[1] = 0.4f;
-	g.button[g.nbuttons].color[2] = 0.7f;
+	g.button[g.nbuttons].color[2] = 0.0f; //7
 	g.button[g.nbuttons].dcolor[0] = g.button[g.nbuttons].color[0] * 0.5f;
 	g.button[g.nbuttons].dcolor[1] = g.button[g.nbuttons].color[1] * 0.5f;
 	g.button[g.nbuttons].dcolor[2] = g.button[g.nbuttons].color[2] * 0.5f;
@@ -634,7 +637,7 @@ void init()
 	g.button[g.nbuttons].r.width = 140;
 	g.button[g.nbuttons].r.height = 60;
 	g.button[g.nbuttons].r.left = 20;
-	g.button[g.nbuttons].r.bot = 160;
+	g.button[g.nbuttons].r.bot = 210;
 	g.button[g.nbuttons].r.right =
 	   g.button[g.nbuttons].r.left + g.button[g.nbuttons].r.width;
 	g.button[g.nbuttons].r.top = g.button[g.nbuttons].r.bot +
@@ -646,13 +649,15 @@ void init()
 	strcpy(g.button[g.nbuttons].text, "Quit");
 	g.button[g.nbuttons].down = 0;
 	g.button[g.nbuttons].click = 0;
-	g.button[g.nbuttons].color[0] = 0.3f;
-	g.button[g.nbuttons].color[1] = 0.3f;
-	g.button[g.nbuttons].color[2] = 0.6f;
+	g.button[g.nbuttons].color[0] = 0.0f;
+	g.button[g.nbuttons].color[1] = 0.4f;
+	g.button[g.nbuttons].color[2] = 0.0f;
 	g.button[g.nbuttons].dcolor[0] = g.button[g.nbuttons].color[0] * 0.5f;
 	g.button[g.nbuttons].dcolor[1] = g.button[g.nbuttons].color[1] * 0.5f;
 	g.button[g.nbuttons].dcolor[2] = g.button[g.nbuttons].color[2] * 0.5f;
 	g.button[g.nbuttons].text_color = 0x00ffffff;
+	g.nbuttons++;
+	//credits_screen_box(g.button);
 	g.nbuttons++;
 }
 
@@ -660,9 +665,9 @@ void resetGame()
 {
 	initSnake();
 	initRat();
-	extern void initHawk(Hawk *h);
-        initHawk(&g.hawk);
+	cleanhawk(&g.hawk); 
 	g.gameover  = 0;
+	g.hawks     = 0; 
 	g.winner    = 0;
 	g.reset = 1;
 }
@@ -685,10 +690,6 @@ extern int jhello();
 //=================================
 extern int Money();
 extern int youlost(); 
-//Param added an extern function:
-//=================================
-extern int CSUB();
-
 
 int checkKeys(XEvent *e)
 {
@@ -723,12 +724,12 @@ int checkKeys(XEvent *e)
 			// help screen state varialbe 
 			g.help = help_screen(g.help);
 			break;
-			case XK_k:
+		case XK_k:
                 // To change the color of the snake
-                        g.changeSnakeColor = change_snake_color();
-                        //if (g.changeSnakeColor == 1) {
+                        g.changeSnakeColor++;
+                        if (g.changeSnakeColor == 2) {
                         //    g.changeSnakeColor = 0;
-                        //}
+                        }
                         break;
 
 		case XK_s:
@@ -741,6 +742,11 @@ int checkKeys(XEvent *e)
 			greeting();
 			break;
 		case XK_a:
+		        g.gameover = 1;
+		        showyoulost(g.xres,g.yres); 	
+			break;
+		case XK_e:
+			g.hawks = 1;
 			break;
 		case XK_c:
 			g.credits = set_credits_state(g.credits);
@@ -928,6 +934,10 @@ void physics(void)
 		}
 	}
 	//
+	hawkgameover(g.snake.length, g.snake.pos, &g.gameover, &g.hawk);
+	
+
+        //
 	newpos[0] = headpos[0];
 	newpos[1] = headpos[1];
 	for (i=1; i<g.snake.length; i++) {
@@ -1059,13 +1069,17 @@ void render(void)
 		}
 	}
 	//draw the main game board in middle of screen
-	glColor3f(0.6f, 0.5f, 0.2f);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
+	//glColor3f(0.6f, 0.5f, 0.2f);
+	glColor4f(0.4, 0.6, 0.2, 0.85);
 	glBegin(GL_QUADS);
 		glVertex2i(s0-b2, s1-b2);
 		glVertex2i(s0-b2, s1+b2);
 		glVertex2i(s0+b2, s1+b2);
 		glVertex2i(s0+b2, s1-b2);
 	glEnd();
+	glDisable(GL_BLEND);
 	//
 	//grid lines...
 	int x0 = s0-b2;
@@ -1093,9 +1107,40 @@ void render(void)
 	//
 	//draw snake...
 	#ifdef COLORFUL_SNAKE
-	//float c[3]={1.0f,1.0,0.5};
-	float val = g.changeSnakeColor;
-	float c[3] = {val, val, val};
+	
+	float c[3]={1.0f,1.0,0.5};
+	// integer works!! 
+	//char count = char(g.changeSnakeColor);
+	if(g.changeSnakeColor == 1) {
+	    //std::cout << g.changeSnakeColor << std::endl;
+            c[0] = change_snake_color_1(g.changeSnakeColor);
+	    c[1] = change_snake_color_2(g.changeSnakeColor);
+	    c[2] = change_snake_color_3(g.changeSnakeColor);
+
+	}
+
+	if(g.changeSnakeColor == 2) {
+	    //std::cout << g.changeSnakeColor << std::endl;
+            c[0] = change_snake_color_1(g.changeSnakeColor);
+	    c[1] = change_snake_color_2(g.changeSnakeColor);
+	    c[2] = change_snake_color_3(g.changeSnakeColor);
+
+
+	}
+
+	if(g.changeSnakeColor > 2) {
+	    g.changeSnakeColor = 0;
+	}
+
+
+
+
+
+
+	//float val_1 = g.changeSnakeColor;
+	//float val_2 = change_snake_color();
+	//float val_3 = change_snake_color();
+	//float c[3] = {val_1, 1 - val_2, val_3};
 	float rgb[3];
 	rgb[0] = -0.9 / (float)g.snake.length;
 	rgb[2] = -0.45 / (float)g.snake.length;
@@ -1155,15 +1200,16 @@ void render(void)
 	}
 
 	// Yeana's feature 1: change the snake color 
-        if (g.changeSnakeColor == 1.0) {
+        /*if (g.changeSnakeColor == 1.0) {
 
             //red -= g.changeSnakeColor;
             //green += g.changeSnakeColor;
             //blue -= g.changeSnakeColor;
 
-            val = change_snake_color();
-
-        }
+            val_1 = change_snake_color();
+            val_2 = change_snake_color();
+            val_3 = change_snake_color();
+        }*/
 
 	//Darien's Startup Screen
 	if (g.startup) {
@@ -1179,6 +1225,14 @@ void render(void)
 	    //show you lost
 	    showyoulost(g.xres,g.yres);
 	}
+
+	//jayden crate hawks
+	if (g.hawks){
+	    cratehawks(&g.hawk, cent);
+	    extern void initHawk(Hawk *h);
+            initHawk(&g.hawk);
+	}
+
 	//Jorge's credits screen
 	if (g.credits) {
 		//toggle credits - seperate from a menu option for now

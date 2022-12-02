@@ -14,13 +14,14 @@
 #include <GL/glx.h>
 #include "log.h"
 #include "fonts.h"
+#include "jbankston.h"
 
 using namespace std;
 
-typedef struct t_hawk{
-        int status;
-        int pos[2];
-} Hawk;
+//typedef struct t_hawk{
+//        int status;
+//        int pos[2];
+//} Hawk;
 
 int Money()
 {
@@ -62,9 +63,20 @@ void showyoulost(int xres, int yres)
 
 void initHawk(Hawk *h)
 {
-    h->status = 1; 
-    h->pos[0] = 25; 
-    h->pos[1] = 2; 
+    if (rand()%1000 < 5)
+    {	
+	h->status = 1; 
+	h->pos[0] = rand()%30; 
+	h->pos[1] = rand()%30; 
+    }
+}
+
+void cleanhawk(Hawk *h)
+{
+    h->status = 0;
+    h->pos[0] = -1;
+    h->pos[1] = -1;
+
 }
 
 //int hawkphysics(int *head[], Hawk *h)
@@ -75,8 +87,29 @@ void initHawk(Hawk *h)
 //    return 0;
 //}
 
-void cratehawks()
+void hawkgameover(int snakelength ,int pos[80*80][2], int *gameover, Hawk *h)
 {
+    for (int i=1; i< snakelength; i++) {
+	if ( pos[i][0] == h->pos[0] && 
+		pos[i][1] == h->pos[1]) {
+	    *gameover=1;
+	    return;
+	}
+    }
+
+
+}
+
+void cratehawks(Hawk *h, int cent[])
+{
+    getGridCenter(h->pos[1],h->pos[0],cent);
+        glColor3f(0.82, 0.1f, 0.0f);
+        glBegin(GL_QUADS);
+        glVertex2i(cent[0]-4, cent[1]-3);
+        glVertex2i(cent[0]-4, cent[1]+4);
+        glVertex2i(cent[0]+3, cent[1]+4);
+        glVertex2i(cent[0]+3, cent[1]-3);
+        glEnd();
 
 }
 
