@@ -11,6 +11,11 @@
 #include <X11/keysym.h>
 #include "fonts.h"
 #include "jambriz.h"
+
+#define USE_OPENAL_SOUND
+#ifdef USE_OPENAL_SOUND
+#include </usr/include/AL/alut.h>
+#endif //USE_OPENAL_SOUND
 using namespace std;
 
 
@@ -36,6 +41,9 @@ struct Jlobal
     GLuint snakectexture;
     Button button[MAXBUTTONS];
     int nbuttons;
+    //ALuint alBufferDrip, alBufferTick, alBufferBird, alBufferMCS;
+	ALuint alSourceDrip, alSourceTick, alSourceBird, alSourceMCS, alSourceSGM;
+    ALenum state;
     Jlobal() {
         gamestart = time(NULL);
         timerstart = time(NULL);
@@ -44,6 +52,15 @@ struct Jlobal
         nbuttons = 0;
     }
 } j;
+
+extern void get_sounds(ALuint alSourceDrip, ALuint alSourceTick, ALuint alSourceBird, ALuint alSourceMCS, ALuint alSourceSGM)
+{
+    j.alSourceDrip = alSourceDrip;
+    j.alSourceTick = alSourceTick;
+    j.alSourceBird = alSourceBird;
+    j.alSourceMCS = alSourceMCS;
+    j.alSourceSGM = alSourceSGM;
+}
 
 void get_textures(GLuint BackgroundTexture, GLuint BackgroundTexture2, GLuint BackgroundTexture3, GLuint BackgroundTexture4, GLuint BackgroundTexture5)
 {
@@ -352,8 +369,17 @@ void draw_credits_box()
     }
 }
 
+bool isPlaying(ALuint source) {
+    ALenum state;
+    alGetSourcei(source, AL_SOURCE_STATE, &state);
+    return (state == AL_PLAYING);
+}
+
 void show_credits_screen(int xres, int yres, GLuint snakectexture)
 {
+    if (!(isPlaying(j.alSourceMCS))) {
+        alSourcePlay(j.alSourceMCS);
+    }
     j.xres = xres;
     j.yres = yres;
     Rect r;
@@ -426,10 +452,10 @@ void show_pauseScreen(int xres, int yres)
     // glColor3f(1.0, 1.0, 1.0);
     glColor4f(0.0, 0.0, 0.0, 0.5);
     glBegin(GL_QUADS);
-    glVertex2i(0, 0);
-    glVertex2i(0, yres);
-    glVertex2i(xres, yres);
-    glVertex2i(xres, 0);
+        glVertex2i(0, 0);
+        glVertex2i(0, yres);
+        glVertex2i(xres, yres);
+        glVertex2i(xres, 0);
     glEnd();
     glDisable(GL_BLEND);
     r.left = xres / 2;

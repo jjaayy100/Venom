@@ -1,5 +1,6 @@
 //Jorge's header file
 //
+#include </usr/include/AL/alut.h>
 
 #define MAXBUTTONS 10
 typedef struct t_button {
@@ -18,6 +19,7 @@ extern Button credits_screen_box();
 extern Button donec_box();
 extern void draw_credits_box();
 extern int check_credits_box(XEvent *e);
+extern void get_sounds(ALuint alSourceDrip, ALuint alSourceTick, ALuint alSourceBird, ALuint alSourceMCS, ALuint alsourceSGM);
 extern void get_textures(GLuint BackgroundTexture, GLuint BackgroundTexture2, GLuint BackgroundTexture3, GLuint BackgroundTexture4, GLuint BackgroundTexture5);
 extern void display_background(int xres, int yres,int background_num);
 extern unsigned int set_credits_state(unsigned int credits);
