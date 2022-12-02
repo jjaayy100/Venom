@@ -1117,6 +1117,7 @@ void render(void)
 	}
 	draw_credits_box();
 	}
+	else {
 	//draw the main game board in middle of screen
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
@@ -1151,6 +1152,7 @@ void render(void)
 		glVertex2i(x0,y1);
 	}
 	glEnd();
+	}
 	//
 	#define COLORFUL_SNAKE
 	//
