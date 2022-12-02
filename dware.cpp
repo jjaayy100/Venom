@@ -121,13 +121,16 @@ void resize_map(int x, int y, int boarddim, int griddim, int background_num)
     glBindTexture(GL_TEXTURE_2D, 0); 
 */
     //draw the main board in a different color and size
-    glColor3f(0.7f, 0.5f, 0.3f);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
+    glColor4f(0.4, 0.5, 0.3, 0.83);
     glBegin(GL_QUADS);
         glVertex2i(s0-b2, s1-b2);
         glVertex2i(s0-b2, s1+b2);
         glVertex2i(s0+b2, s1+b2);
         glVertex2i(s0+b2, s1-b2);
     glEnd();
+    glDisable(GL_BLEND);
     //  
     //grid lines...
     int x0 = s0-b2;
