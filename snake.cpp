@@ -1077,6 +1077,46 @@ void render(void)
 		}
 	}
 	draw_credits_box();
+	if (g.mapsize) {
+		//render the map resize
+		resize_map(g.xres, g.yres, g.boardDim, g.gridDim);
+		for (i=0; i<g.nbuttons; i++) {
+		if (g.button[i].over) {
+			int w=2;
+			glColor3f(1.0f, 1.0f, 0.0f);
+			//draw a highlight around button
+			glLineWidth(3);
+			glBegin(GL_LINE_LOOP);
+				glVertex2i(g.button[i].r.left-w,  g.button[i].r.bot-w);
+				glVertex2i(g.button[i].r.left-w,  g.button[i].r.top+w);
+				glVertex2i(g.button[i].r.right+w, g.button[i].r.top+w);
+				glVertex2i(g.button[i].r.right+w, g.button[i].r.bot-w);
+				glVertex2i(g.button[i].r.left-w,  g.button[i].r.bot-w);
+			glEnd();
+			glLineWidth(1);
+		}
+		if (g.button[i].down) {
+			glColor3fv(g.button[i].dcolor);
+		} else {
+			glColor3fv(g.button[i].color);
+		}
+		glBegin(GL_QUADS);
+			glVertex2i(g.button[i].r.left,  g.button[i].r.bot);
+			glVertex2i(g.button[i].r.left,  g.button[i].r.top);
+			glVertex2i(g.button[i].r.right, g.button[i].r.top);
+			glVertex2i(g.button[i].r.right, g.button[i].r.bot);
+		glEnd();
+		r.left = g.button[i].r.centerx;
+		r.bot  = g.button[i].r.centery-8;
+		r.center = 1;
+		if (g.button[i].down) {
+			ggprint16(&r, 0, g.button[i].text_color, "Pressed!");
+		} else {
+			ggprint16(&r, 0, g.button[i].text_color, g.button[i].text);
+		}
+	}
+	draw_credits_box();
+	}
 	//draw the main game board in middle of screen
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
@@ -1225,10 +1265,7 @@ void render(void)
 		//startup screen will automatically be toggled
 		show_startup(g.xres,g.yres);
 	}
-	if (g.mapsize) {
-		//render the map resize
-		resize_map(g.xres, g.yres, g.boardDim, g.gridDim);
-	}
+
 	//jayden's you lost screen
 	if (g.gameover){
 	    //show you lost

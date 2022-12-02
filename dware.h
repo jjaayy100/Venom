@@ -4,7 +4,7 @@ extern void show_startup(int x, int y);
 
 unsigned int check_map(unsigned int k);
 
-void resize_map(int x, int y, int boarddim, int griddim);
+void resize_map(int x, int y, int boarddim, int griddim, int background_num);
 
 void dget_textures(GLuint BackggroundTexture);
 
