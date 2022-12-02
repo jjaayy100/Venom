@@ -96,17 +96,6 @@ typedef struct t_rat {
 //	int pos[2]; 
 //} Hawk; 
 //
-#define MAXBUTTONS 4
-typedef struct t_button {
-	Rect r;
-	char text[32];
-	int over;
-	int down;
-	int click;
-	float color[3];
-	float dcolor[3];
-	unsigned int text_color;
-} Button;
 
 class Image {
 public:
@@ -215,8 +204,8 @@ struct Global {
 	Button button[MAXBUTTONS];
 	int nbuttons;
 	//
-	ALuint alBufferDrip, alBufferTick;
-	ALuint alSourceDrip, alSourceTick;
+	ALuint alBufferDrip, alBufferTick, alBufferBird;
+	ALuint alSourceDrip, alSourceTick, alSourceBird;
 	Global() {
 		xres = 800;
 		yres = 600;
@@ -369,6 +358,7 @@ int main(int argc, char *argv[])
 	srand((unsigned int)time(NULL));
 	clock_gettime(CLOCK_REALTIME, &timePause);
 	clock_gettime(CLOCK_REALTIME, &timeStart);
+	playSound(g.alSourceBird);
 	int done = 0;
 	while (!done) {
 		while (x11.getXPending()) {
@@ -405,7 +395,7 @@ int main(int argc, char *argv[])
 		render();
 		x11.swapBuffers();
 		//Send data to jambriz.cpp file for Jlobal(Still in testing)
-		get_class_data(g.gameover, g.timestat, g.reset, g.pause);
+		get_class_data(g.gameover, g.timestat, g.reset, g.pause, g.credits);
 		if(g.reset) {
 			g.reset = 0;
 		}
@@ -437,6 +427,7 @@ void initSound()
 	//Buffer holds the sound information.
 	g.alBufferDrip = alutCreateBufferFromFile("./sounds/drip.wav");
 	g.alBufferTick = alutCreateBufferFromFile("./sounds/tick.wav");
+	g.alBufferBird = alutCreateBufferFromFile("./sounds/bird.wav");
 	//
 	//Source refers to the sound.
 	//Generate a source, and store it in a buffer.
@@ -461,6 +452,17 @@ void initSound()
 		printf("ERROR: setting source\n");
 		return;
 	}
+	//Generate a source, and store it in a buffer.
+	alGenSources(1, &g.alSourceBird);
+	alSourcei(g.alSourceBird, AL_BUFFER, g.alBufferBird);
+	//Set volume and pitch to normal, no looping of sound.
+	alSourcef(g.alSourceBird, AL_GAIN, 1.0f);
+	alSourcef(g.alSourceBird, AL_PITCH, 1.0f);
+	alSourcei(g.alSourceBird, AL_LOOPING, AL_TRUE);
+	if (alGetError() != AL_NO_ERROR) {
+		printf("ERROR: setting source\n");
+		return;
+	}
 	#endif //USE_OPENAL_SOUND
 }
 
@@ -470,9 +472,11 @@ void cleanupSound()
 	//First delete the source.
 	alDeleteSources(1, &g.alSourceDrip);
 	alDeleteSources(1, &g.alSourceTick);
+	alDeleteSources(1, &g.alSourceBird);
 	//Delete the buffer.
 	alDeleteBuffers(1, &g.alBufferDrip);
 	alDeleteBuffers(1, &g.alBufferTick);
+	alDeleteBuffers(1, &g.alBufferBird);
 	//Close out OpenAL itself.
 	//Get active context.
 	ALCcontext *Context = alcGetCurrentContext();
@@ -657,7 +661,10 @@ void init()
 	g.button[g.nbuttons].dcolor[2] = g.button[g.nbuttons].color[2] * 0.5f;
 	g.button[g.nbuttons].text_color = 0x00ffffff;
 	g.nbuttons++;
-	//credits_screen_box(g.button);
+	//Credits Screen Button
+	g.button[3] = credits_screen_box();
+	g.nbuttons++;
+	g.button[4] = donec_box();
 	g.nbuttons++;
 }
 
@@ -757,9 +764,6 @@ int checkKeys(XEvent *e)
 		case XK_b:
 			g.setbackground = changebackground(g.setbackground);
 			break;
-		case XK_m:
-			g.timestat = g.timestat ^ 1;
-			break;
 		case XK_j:
 			Money();
 			break;
@@ -837,11 +841,18 @@ int checkMouse(XEvent *e)
 							cleanupSound();
 							exit(0);
 							break;
+						case 2:
+							g.credits = set_credits_state(g.credits);
+							break;
+						case 3:
+							g.credits = set_credits_state(g.credits);
+							break;
 					}
 				}
 			}
 		}
 	}
+	check_credits_box(e);
 	return 0;
 }
 
@@ -870,10 +881,7 @@ void getGridCenter(const int i, const int j, int cent[2])
 
 void physics(void)
 {
-	while(g.startup){
-		return;
-	}
-	while(g.pause){
+	while(g.startup || g.pause || g.credits || g.help) {
 		return;
 	}
 	int i;
@@ -1068,6 +1076,7 @@ void render(void)
 			ggprint16(&r, 0, g.button[i].text_color, g.button[i].text);
 		}
 	}
+	draw_credits_box();
 	//draw the main game board in middle of screen
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
