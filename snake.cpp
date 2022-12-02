@@ -1079,7 +1079,7 @@ void render(void)
 	draw_credits_box();
 	if (g.mapsize) {
 		//render the map resize
-		resize_map(g.xres, g.yres, g.boardDim, g.gridDim);
+		resize_map(g.xres, g.yres, g.boardDim, g.gridDim, g.setbackground);
 		for (i=0; i<g.nbuttons; i++) {
 		if (g.button[i].over) {
 			int w=2;
