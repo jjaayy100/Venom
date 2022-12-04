@@ -1302,6 +1302,7 @@ void render(void)
 
 	//jayden's you lost screen
 	if (g.gameover){
+	    cleanhawk(&g.hawk);
 	    //show you lost
 	    showyoulost(g.xres,g.yres);
 	}

@@ -58,6 +58,8 @@ void showyoulost(int xres, int yres)
     r.bot = ycent + 80;
     r.center = 50;
     ggprint16(&r, 50, 0xffffffff, "YOU LOST");
+    ggprint16(&r, 50, 0xffffffff, "DONT BE SORRY");
+    ggprint16(&r, 50, 0xffffffff, "BE BETTER");
     ggprint16(&r, 50, 0xffffffff, "Press 'R' To Restart");
 }
 
