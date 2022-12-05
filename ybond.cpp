@@ -95,7 +95,7 @@ void show_help_screen(int xres, int yres)
     r.left = 150;
     r.center = 0;
     
-    ggprint16(&r, 16, 0x00000000, "  z  -- change the si'Z'e of the gird   (DARIEN)");
+    ggprint16(&r, 16, 0x00000000, "  z  -- change the si'Z'e of the grid   (DARIEN)");
     ggprint16(&r, 16, 0x0089508c, " === ");
 
     r.bot = yres - 240;
