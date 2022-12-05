@@ -768,10 +768,9 @@ int checkKeys(XEvent *e)
 			g.help = help_screen(g.help);
 			break;
 		case XK_k:
-                // To change the color of the snake
-                        g.changeSnakeColor++;
-                        
-                        break;
+            // To change the color of the snake
+            g.changeSnakeColor++;
+            break;
 
 		case XK_s:
 			g.startup = check_startup(g.startup);
@@ -978,8 +977,7 @@ void physics(void)
 	//
 	hawkgameover(g.snake.length, g.snake.pos, &g.gameover, &g.hawk);
 	
-
-        //
+    //
 	newpos[0] = headpos[0];
 	newpos[1] = headpos[1];
 	for (i=1; i<g.snake.length; i++) {
