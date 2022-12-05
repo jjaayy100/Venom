@@ -91,22 +91,11 @@ typedef struct t_rat {
 	int pos[2];
 } Rat;
 //jayden added
-typedef struct t_hawk{
-        int status;
-	int pos[2]; 
-} Hawk; 
+//typedef struct t_hawk{
+//        int status;
+//	int pos[2]; 
+//} Hawk; 
 //
-#define MAXBUTTONS 4
-typedef struct t_button {
-	Rect r;
-	char text[32];
-	int over;
-	int down;
-	int click;
-	float color[3];
-	float dcolor[3];
-	unsigned int text_color;
-} Button;
 
 class Image {
 public:
@@ -200,6 +189,7 @@ struct Global {
 	int gridDim;
 	int boardDim;
 	int gameover;
+	int hawks;
 	int winner;
 	int gamestart;
 	unsigned int setbackground;
@@ -214,13 +204,14 @@ struct Global {
 	Button button[MAXBUTTONS];
 	int nbuttons;
 	//
-	ALuint alBufferDrip, alBufferTick;
-	ALuint alSourceDrip, alSourceTick;
+	ALuint alBufferDrip, alBufferTick, alBufferBird, alBufferMCS, alBufferSGM;
+    ALuint alSourceDrip, alSourceTick, alSourceBird, alSourceMCS, alSourceSGM;
 	Global() {
 		xres = 800;
 		yres = 600;
 		gridDim = 40;
 		gameover = 0;
+		hawks = 0; 
 		winner = 0;
 		credits = 0;
 		nbuttons = 0;
@@ -367,6 +358,7 @@ int main(int argc, char *argv[])
 	srand((unsigned int)time(NULL));
 	clock_gettime(CLOCK_REALTIME, &timePause);
 	clock_gettime(CLOCK_REALTIME, &timeStart);
+	playSound(g.alSourceBird);
 	int done = 0;
 	while (!done) {
 		while (x11.getXPending()) {
@@ -403,7 +395,7 @@ int main(int argc, char *argv[])
 		render();
 		x11.swapBuffers();
 		//Send data to jambriz.cpp file for Jlobal(Still in testing)
-		get_class_data(g.gameover, g.timestat, g.reset, g.pause);
+		get_class_data(g.gameover, g.timestat, g.reset, g.pause, g.credits);
 		if(g.reset) {
 			g.reset = 0;
 		}
@@ -435,7 +427,10 @@ void initSound()
 	//Buffer holds the sound information.
 	g.alBufferDrip = alutCreateBufferFromFile("./sounds/drip.wav");
 	g.alBufferTick = alutCreateBufferFromFile("./sounds/tick.wav");
-	//
+	g.alBufferBird = alutCreateBufferFromFile("./sounds/bird.wav");
+	g.alBufferMCS = alutCreateBufferFromFile("./sounds/music_for_credits_screen.wav");
+    g.alBufferSGM = alutCreateBufferFromFile("./sounds/start_game.wav");
+
 	//Source refers to the sound.
 	//Generate a source, and store it in a buffer.
 	alGenSources(1, &g.alSourceDrip);
@@ -459,6 +454,41 @@ void initSound()
 		printf("ERROR: setting source\n");
 		return;
 	}
+	//Generate a source, and store it in a buffer.
+	alGenSources(1, &g.alSourceBird);
+	alSourcei(g.alSourceBird, AL_BUFFER, g.alBufferBird);
+	//Set volume and pitch to normal, no looping of sound.
+	alSourcef(g.alSourceBird, AL_GAIN, 1.0f);
+	alSourcef(g.alSourceBird, AL_PITCH, 1.0f);
+	alSourcei(g.alSourceBird, AL_LOOPING, AL_TRUE);
+	if (alGetError() != AL_NO_ERROR) {
+		printf("ERROR: setting source\n");
+		return;
+	}
+    //Generate a source, and store it in a buffer.
+    alGenSources(1, &g.alSourceMCS);
+    alSourcei(g.alSourceMCS, AL_BUFFER, g.alBufferMCS);
+    //Set volume and pitch to normal, no looping of sound.
+    alSourcef(g.alSourceMCS, AL_GAIN, 1.0f);
+    alSourcef(g.alSourceMCS, AL_PITCH, 1.0f);
+    alSourcei(g.alSourceMCS, AL_LOOPING, AL_TRUE);
+    if (alGetError() != AL_NO_ERROR) {
+        printf("ERROR: setting source\n");
+        return;
+    }
+    //Generate a source, and store it in a buffer.
+    alGenSources(1, &g.alSourceSGM);
+    alSourcei(g.alSourceSGM, AL_BUFFER, g.alBufferSGM);
+    //Set volume and pitch to normal, no looping of sound.
+    alSourcef(g.alSourceSGM, AL_GAIN, 1.0f);
+    alSourcef(g.alSourceSGM, AL_PITCH, 1.0f);
+    alSourcei(g.alSourceSGM, AL_LOOPING, AL_FALSE);
+    if (alGetError() != AL_NO_ERROR) {
+        printf("ERROR: setting source\n");
+        return;
+    }
+    get_sounds(g.alSourceDrip, g.alSourceTick, g.alSourceBird, g.alSourceMCS, g.alSourceSGM);
+
 	#endif //USE_OPENAL_SOUND
 }
 
@@ -468,9 +498,16 @@ void cleanupSound()
 	//First delete the source.
 	alDeleteSources(1, &g.alSourceDrip);
 	alDeleteSources(1, &g.alSourceTick);
+	alDeleteSources(1, &g.alSourceBird);
+	alDeleteSources(1, &g.alSourceMCS);
+	alDeleteSources(1, &g.alSourceSGM);
+	
 	//Delete the buffer.
 	alDeleteBuffers(1, &g.alBufferDrip);
 	alDeleteBuffers(1, &g.alBufferTick);
+	alDeleteBuffers(1, &g.alBufferBird);
+	alDeleteBuffers(1, &g.alBufferMCS);
+	alDeleteBuffers(1, &g.alBufferSGM);
 	//Close out OpenAL itself.
 	//Get active context.
 	ALCcontext *Context = alcGetCurrentContext();
@@ -577,6 +614,7 @@ void initOpengl(void)
 
 void initSnake()
 {
+	playSound(g.alSourceSGM);
 	int i;
 	g.snake.status = 1;
 	g.snake.delay = .15;
@@ -603,8 +641,8 @@ void init()
 	initSnake();
 	initRat();
 	//jayden added
-	extern void initHawk(Hawk *h);
-	initHawk(&g.hawk);
+	//extern void initHawk(Hawk *h);
+	//initHawk(&g.hawk);
 	//
 	//initialize buttons...
 	g.nbuttons=0;
@@ -655,7 +693,10 @@ void init()
 	g.button[g.nbuttons].dcolor[2] = g.button[g.nbuttons].color[2] * 0.5f;
 	g.button[g.nbuttons].text_color = 0x00ffffff;
 	g.nbuttons++;
-	//credits_screen_box(g.button);
+	//Credits Screen Button
+	g.button[3] = credits_screen_box();
+	g.nbuttons++;
+	g.button[4] = donec_box();
 	g.nbuttons++;
 }
 
@@ -663,9 +704,9 @@ void resetGame()
 {
 	initSnake();
 	initRat();
-	extern void initHawk(Hawk *h);
-        initHawk(&g.hawk);
+	cleanhawk(&g.hawk); 
 	g.gameover  = 0;
+	g.hawks     = 0; 
 	g.winner    = 0;
 	g.reset = 1;
 }
@@ -688,10 +729,6 @@ extern int jhello();
 //=================================
 extern int Money();
 extern int youlost(); 
-//Param added an extern function:
-//=================================
-extern int CSUB();
-
 
 int checkKeys(XEvent *e)
 {
@@ -744,6 +781,11 @@ int checkKeys(XEvent *e)
 			greeting();
 			break;
 		case XK_a:
+		        g.gameover = 1;
+		        showyoulost(g.xres,g.yres); 	
+			break;
+		case XK_e:
+			g.hawks = 1;
 			break;
 		case XK_c:
 			g.credits = set_credits_state(g.credits);
@@ -753,9 +795,6 @@ int checkKeys(XEvent *e)
 			break;
 		case XK_b:
 			g.setbackground = changebackground(g.setbackground);
-			break;
-		case XK_m:
-			g.timestat = g.timestat ^ 1;
 			break;
 		case XK_j:
 			Money();
@@ -834,11 +873,18 @@ int checkMouse(XEvent *e)
 							cleanupSound();
 							exit(0);
 							break;
+						case 2:
+							g.credits = set_credits_state(g.credits);
+							break;
+						case 3:
+							g.credits = set_credits_state(g.credits);
+							break;
 					}
 				}
 			}
 		}
 	}
+	check_credits_box(e);
 	return 0;
 }
 
@@ -867,10 +913,7 @@ void getGridCenter(const int i, const int j, int cent[2])
 
 void physics(void)
 {
-	while(g.startup){
-		return;
-	}
-	while(g.pause){
+	while(g.startup || g.pause || g.credits || g.help) {
 		return;
 	}
 	int i;
@@ -931,6 +974,10 @@ void physics(void)
 		}
 	}
 	//
+	hawkgameover(g.snake.length, g.snake.pos, &g.gameover, &g.hawk);
+	
+
+        //
 	newpos[0] = headpos[0];
 	newpos[1] = headpos[1];
 	for (i=1; i<g.snake.length; i++) {
@@ -1061,6 +1108,48 @@ void render(void)
 			ggprint16(&r, 0, g.button[i].text_color, g.button[i].text);
 		}
 	}
+	draw_credits_box();
+	if (g.mapsize) {
+		//render the map resize
+		resize_map(g.xres, g.yres, g.boardDim, g.gridDim, g.setbackground);
+		for (i=0; i<g.nbuttons; i++) {
+		if (g.button[i].over) {
+			int w=2;
+			glColor3f(1.0f, 1.0f, 0.0f);
+			//draw a highlight around button
+			glLineWidth(3);
+			glBegin(GL_LINE_LOOP);
+				glVertex2i(g.button[i].r.left-w,  g.button[i].r.bot-w);
+				glVertex2i(g.button[i].r.left-w,  g.button[i].r.top+w);
+				glVertex2i(g.button[i].r.right+w, g.button[i].r.top+w);
+				glVertex2i(g.button[i].r.right+w, g.button[i].r.bot-w);
+				glVertex2i(g.button[i].r.left-w,  g.button[i].r.bot-w);
+			glEnd();
+			glLineWidth(1);
+		}
+		if (g.button[i].down) {
+			glColor3fv(g.button[i].dcolor);
+		} else {
+			glColor3fv(g.button[i].color);
+		}
+		glBegin(GL_QUADS);
+			glVertex2i(g.button[i].r.left,  g.button[i].r.bot);
+			glVertex2i(g.button[i].r.left,  g.button[i].r.top);
+			glVertex2i(g.button[i].r.right, g.button[i].r.top);
+			glVertex2i(g.button[i].r.right, g.button[i].r.bot);
+		glEnd();
+		r.left = g.button[i].r.centerx;
+		r.bot  = g.button[i].r.centery-8;
+		r.center = 1;
+		if (g.button[i].down) {
+			ggprint16(&r, 0, g.button[i].text_color, "Pressed!");
+		} else {
+			ggprint16(&r, 0, g.button[i].text_color, g.button[i].text);
+		}
+	}
+	draw_credits_box();
+	}
+	else {
 	//draw the main game board in middle of screen
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
@@ -1095,6 +1184,7 @@ void render(void)
 		glVertex2i(x0,y1);
 	}
 	glEnd();
+	}
 	//
 	#define COLORFUL_SNAKE
 	//
@@ -1209,15 +1299,21 @@ void render(void)
 		//startup screen will automatically be toggled
 		show_startup(g.xres,g.yres);
 	}
-	if (g.mapsize) {
-		//render the map resize
-		resize_map(g.xres, g.yres, g.boardDim, g.gridDim);
-	}
+
 	//jayden's you lost screen
 	if (g.gameover){
+	    cleanhawk(&g.hawk);
 	    //show you lost
 	    showyoulost(g.xres,g.yres);
 	}
+
+	//jayden crate hawks
+	if (g.hawks){
+	    cratehawks(&g.hawk, cent);
+	    extern void initHawk(Hawk *h);
+            initHawk(&g.hawk);
+	}
+
 	//Jorge's credits screen
 	if (g.credits) {
 		//toggle credits - seperate from a menu option for now

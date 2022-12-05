@@ -35,12 +35,6 @@ void dget_textures(GLuint BackgroundTexture)
     b.BackgroundTexture = BackgroundTexture;
 }
 
-void get_snake_pos(int length, int snake_pos[][2])
-{
-    d.snake_pos[0][0] = snake_pos[0][0];
-    d.snake_pos[0][1] = snake_pos[0][1];
-    d.length = length;
-}
 
 int greeting()
 {
@@ -89,7 +83,7 @@ unsigned int check_map(unsigned int k)
 }
 
 //resizing should be done in render. The check keys function should just go to the call in render
-void resize_map(int x, int y, int boarddim, int griddim)
+void resize_map(int x, int y, int boarddim, int griddim, int background_num)
 {
     int brs = boarddim / 20;
     int grs = griddim / 2;
@@ -113,25 +107,30 @@ void resize_map(int x, int y, int boarddim, int griddim)
     //this sets to 2D mode (no perspective)
     glOrtho(0, x, 0, y, -1, 1); 
     //  
-    //screen background
+    // call screen background by calling function from Jorge's source file
+    display_background(x,y,background_num);
+    /* original code for displaying the screen background.
     glColor3f(0.5f, 0.5f, 0.5f);
     glBindTexture(GL_TEXTURE_2D, 0); //g.marbleTexture);
     glBegin(GL_QUADS);
-        glTexCoord2f(0.0f, 0.0f); glVertex2i(0,      0); 
-        glTexCoord2f(0.0f, 1.0f); glVertex2i(0,      y); 
+        glTexCoord2f(0.0f, 0.0f); glVertex2i(0, 0); 
+        glTexCoord2f(0.0f, 1.0f); glVertex2i(0, y); 
         glTexCoord2f(1.0f, 1.0f); glVertex2i(x, y); 
         glTexCoord2f(1.0f, 0.0f); glVertex2i(x, 0); 
     glEnd();
     glBindTexture(GL_TEXTURE_2D, 0); 
-
+*/
     //draw the main board in a different color and size
-    glColor3f(0.7f, 0.5f, 0.3f);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
+    glColor4f(0.4, 0.5, 0.3, 0.83);
     glBegin(GL_QUADS);
         glVertex2i(s0-b2, s1-b2);
         glVertex2i(s0-b2, s1+b2);
         glVertex2i(s0+b2, s1+b2);
         glVertex2i(s0+b2, s1-b2);
     glEnd();
+    glDisable(GL_BLEND);
     //  
     //grid lines...
     int x0 = s0-b2;
