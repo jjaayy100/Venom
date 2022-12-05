@@ -398,6 +398,8 @@ int main(int argc, char *argv[])
 		get_class_data(g.gameover, g.timestat, g.reset, g.pause, g.credits);
 		if(g.reset) {
 			g.reset = 0;
+			g.changeSnakeColor = 0;
+			g.help = 0;
 		}
 	}
 	cleanupSound();
@@ -708,6 +710,8 @@ void resetGame()
 	g.gameover  = 0;
 	g.hawks     = 0; 
 	g.winner    = 0;
+	g.changeSnakeColor = 0;
+	g.help = 0;
 	g.reset = 1;
 }
 
@@ -759,16 +763,14 @@ int checkKeys(XEvent *e)
 			break;
 		case XK_h:
 		// My name (Yeana) and a number will show
-			show_my_name();
+			//show_my_name();
 			// help screen state varialbe 
 			g.help = help_screen(g.help);
 			break;
 		case XK_k:
                 // To change the color of the snake
                         g.changeSnakeColor++;
-                        if (g.changeSnakeColor == 2) {
-                        //    g.changeSnakeColor = 0;
-                        }
+                        
                         break;
 
 		case XK_s:
@@ -780,7 +782,7 @@ int checkKeys(XEvent *e)
 		case XK_d:
 			greeting();
 			break;
-		case XK_a:
+		case XK_v:
 		        g.gameover = 1;
 		        showyoulost(g.xres,g.yres); 	
 			break;
@@ -1194,9 +1196,10 @@ void render(void)
 	float c[3]={1.0f,1.0,0.5};
 	// integer works!! 
 	//char count = char(g.changeSnakeColor);
+	/*
 	if(g.changeSnakeColor == 1) {
 	    //std::cout << g.changeSnakeColor << std::endl;
-            c[0] = change_snake_color_1(g.changeSnakeColor);
+        c[0] = change_snake_color_1(g.changeSnakeColor);
 	    c[1] = change_snake_color_2(g.changeSnakeColor);
 	    c[2] = change_snake_color_3(g.changeSnakeColor);
 
@@ -1204,22 +1207,27 @@ void render(void)
 
 	if(g.changeSnakeColor == 2) {
 	    //std::cout << g.changeSnakeColor << std::endl;
-            c[0] = change_snake_color_1(g.changeSnakeColor);
+        c[0] = change_snake_color_1(g.changeSnakeColor);
 	    c[1] = change_snake_color_2(g.changeSnakeColor);
 	    c[2] = change_snake_color_3(g.changeSnakeColor);
 
 
+	}*/
+
+	if (g.changeSnakeColor > 0) {
+
+        c[0] = change_snake_color_1(g.changeSnakeColor);
+	    c[1] = change_snake_color_2(g.changeSnakeColor);
+	    c[2] = change_snake_color_3(g.changeSnakeColor);    
+	
 	}
 
-	if(g.changeSnakeColor > 2) {
+	if(g.changeSnakeColor > 4) {
 	    g.changeSnakeColor = 0;
 	}
 
 
-
-
-
-
+    // Yeana's experiement on changing snake color randomly
 	//float val_1 = g.changeSnakeColor;
 	//float val_2 = change_snake_color();
 	//float val_3 = change_snake_color();
@@ -1301,14 +1309,14 @@ void render(void)
 	}
 
 	//jayden's you lost screen
-	if (g.gameover){
+	if (g.gameover){ 
 	    cleanhawk(&g.hawk);
 	    //show you lost
 	    showyoulost(g.xres,g.yres);
 	}
 
 	//jayden crate hawks
-	if (g.hawks){
+	if (g.hawks) { 
 	    cratehawks(&g.hawk, cent);
 	    extern void initHawk(Hawk *h);
             initHawk(&g.hawk);

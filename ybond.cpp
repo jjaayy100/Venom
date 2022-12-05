@@ -1,5 +1,5 @@
 // Student Name: Yeana Bond
-// New source file 1
+// Yeana's Source File 
 
 using namespace std;
 #include <iostream>
@@ -20,9 +20,6 @@ int show_my_name()
     return 0;
 }
 
-
-
-// Oct 25 update
 
 float change_snake_color()
 {
@@ -163,6 +160,10 @@ void show_help_screen(int xres, int yres)
 
 }
 
+// RGB value reference: https://www.tug.org/pracjourn/2007-4/walden/color.pdf
+// I am pretty sure I can use a better data structure after looking at the above
+// file: there is a patten I can follow 
+
 float change_snake_color_1(int i)
 {
     float red = 0.0f;
@@ -173,6 +174,14 @@ float change_snake_color_1(int i)
 
         case 2:
             red = 0.0f;
+            break;
+
+        case 3:
+            red = 0.4f;
+            break;
+
+        case 4:
+            red = 1.0f;
             break;
 
         default:
@@ -193,6 +202,14 @@ float change_snake_color_2(int i)
 
         case 2:
             green = 0.0f;
+            break;
+        
+        case 3:
+            green = 0.1f;
+            break;
+
+        case 4:
+            green = 0.4f;
             break;
 
         default:
@@ -215,10 +232,17 @@ float change_snake_color_3(int i)
             blue = 1.0f;
             break;
 
+        case 3:
+            blue = 0.7f;
+            break;
+
+        case 4:
+            blue = 0.0f;
+            break;
+
         default:
             blue = 0.5f;
     }
 
     return blue; 
 }
-
