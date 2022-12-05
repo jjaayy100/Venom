@@ -40,6 +40,11 @@ float change_snake_color()
 
 }
 
+// Initially, changing color of the snake depended on the time function.
+// I noticed a pattern in the value of float variable, change.
+// change_snake_color_1() - change_snake_color_3() were implemented 
+// in order to change the color of the snake to a designated color 
+// upon a number of key input 
 unsigned int help_screen(unsigned int h)
 {
     float a;
@@ -50,20 +55,13 @@ unsigned int help_screen(unsigned int h)
 
 }
 
-unsigned int switch_K(unsigned int k)
-{
-   
-	k = k ^ 1;
-	return k;
-
-}
 
 void show_help_screen(int xres, int yres)
 {
     int xcent = xres/2;
     int ycent = yres/2;
     int w = 300;
-    glColor3f(1.0, 1.0, 1.0);
+    glColor3f(0.9, 0.6, 1.0);
     glBegin(GL_QUADS);
     	glVertex2f(xcent -w, ycent -w);
     	glVertex2f(xcent -w, ycent +w);
@@ -74,16 +72,94 @@ void show_help_screen(int xres, int yres)
 
     Rect r;
     //glClear(GL_COLOR_BUFFER_BIT);
-    r.bot = yres - 20;
-    r.left = 10;
+    r.bot = yres - 80;
+    r.left = 150;
     r.center = 0;
-    ggprint8b(&r, 16, 0x00ff0000, " HELP ");
+    ggprint16(&r, 16, 0x00ffffff, " ============ H E L P    S C R E E N ============ ");
 
 
-    r.bot = yres - 30;
-    r.left = 100;
+    r.bot = yres - 120;
+    r.left = 150;
     r.center = 0;
-    ggprint8b(&r, 16, 0x00ff0000, " Press k: to change color of the snake ");
+    
+    ggprint16(&r, 16, 0x00000000, "  k  -- change the color of the sna'K'e   (YEANA)");
+    ggprint16(&r, 16, 0x0089508c, " === ");
+
+    
+    r.bot = yres - 160;
+    r.left = 150;
+    r.center = 0;
+    
+    ggprint16(&r, 16, 0x0089508c, "  b  -- change the 'B'ackground   (JORGE) ");
+    ggprint16(&r, 16, 0x0089508c, " === ");
+
+    
+    r.bot = yres - 200;
+    r.left = 150;
+    r.center = 0;
+    
+    ggprint16(&r, 16, 0x00000000, "  z  -- change the si'Z'e of the gird   (DARIEN)");
+    ggprint16(&r, 16, 0x0089508c, " === ");
+
+    r.bot = yres - 240;
+    r.left = 150;
+    r.center = 0;
+   
+    ggprint16(&r, 16, 0x0089508c, "  p  -- 'P'ause the game  (JORGE + YEANA) ");
+    ggprint16(&r, 16, 0x0089508c, " === ");
+
+    
+    r.bot = yres - 280;
+    r.left = 150;
+    r.center = 0;
+    
+    ggprint16(&r, 16, 0x00000000, "  t  -- display the 'T'imer   (JORGE) ");
+    ggprint16(&r, 16, 0x0089508c, " === ");
+
+
+    r.bot = yres - 320;
+    r.left = 150;
+    r.center = 0;
+    
+    ggprint16(&r, 16, 0x0089508c, "  e  -- play againt an 'E'nemy (a hawk)  (JAY) ");
+    ggprint16(&r, 16, 0x0089508c, " === ");
+
+    r.bot = yres - 360;
+    r.left = 150;
+    r.center = 0;
+    
+    ggprint16(&r, 16, 0x00000000, "  c  -- view the 'C'redit screen  (JORGE)");
+    ggprint16(&r, 16, 0x0089508c, " === ");
+
+    r.bot = yres - 400;
+    r.left = 150;
+    r.center = 0;
+    
+    ggprint16(&r, 16, 0x0089508c, "  v  -- view the game-o'V'er screen   (JAY) ");
+    ggprint16(&r, 16, 0x0089508c, " === ");
+
+    
+    r.bot = yres - 440;
+    r.left = 150;
+    r.center = 0;
+
+    ggprint16(&r, 16, 0x00000000, "  h  -- view the 'H'elp screen   (YEANA)  ");
+    ggprint16(&r, 16, 0x0089508c, " === ");
+
+    r.bot = yres - 480;
+    r.left = 150;
+    r.center = 0;
+   
+    ggprint16(&r, 16, 0x0089508c, "  s  -- 'S'tart the game   (DARIEN) ");
+    ggprint16(&r, 16, 0x0089508c, " === ");
+
+
+    r.bot = yres - 520;
+    r.left = 150;
+    r.center = 0;
+
+    ggprint16(&r, 16, 0x00000000, "  r  -- 'R'eset the game  ");
+    ggprint16(&r, 16, 0x0089508c, " === ");
 
 }
 
